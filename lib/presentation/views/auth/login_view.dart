@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/api_service.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -12,10 +13,8 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _codeController = TextEditingController();
-  final _api = ApiService();
   
   bool _codeSent = false;
-  bool _isLoading = false;
   late TabController _tabController;
 
   @override
@@ -27,43 +26,54 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
   @override
   void dispose() {
     _tabController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    _codeController.dispose();
     super.dispose();
   }
 
   Future<void> _sendCode() async {
-    setState(() => _isLoading = true);
+    final authProvider = context.read<AuthProvider>();
     try {
       if (_tabController.index == 0) {
-        await _api.loginOtp(_phoneController.text);
+        await authProvider.sendPhoneOtp(_phoneController.text);
       } else {
-        await _api.loginEmail(_emailController.text);
+        await authProvider.sendEmailOtp(_emailController.text);
       }
       setState(() => _codeSent = true);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Erreur: $e")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: Colors.redAccent,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
       }
-    } finally {
-      setState(() => _isLoading = false);
     }
   }
 
   Future<void> _verifyCode() async {
-    setState(() => _isLoading = true);
+    final authProvider = context.read<AuthProvider>();
     try {
       bool success = _tabController.index == 0 
-        ? await _api.verifyOtp(_phoneController.text, _codeController.text)
-        : await _api.verifyEmailOtp(_emailController.text, _codeController.text);
+        ? await authProvider.verifyPhoneOtp(_phoneController.text, _codeController.text)
+        : await authProvider.verifyEmailOtp(_emailController.text, _codeController.text);
 
       if (success && mounted) {
         Navigator.of(context).pushReplacementNamed('/home');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Erreur: $e")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: Colors.redAccent,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
       }
-    } finally {
-      setState(() => _isLoading = false);
     }
   }
 
@@ -100,7 +110,7 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: const Color(0xFF2563EB),
             shape: BoxShape.circle,
@@ -112,22 +122,24 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
               )
             ],
           ),
-          child: const Icon(Icons.account_balance_rounded, color: Colors.white, size: 48),
+          child: const Icon(Icons.account_balance_rounded, color: Colors.white, size: 40),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
         const Text(
           "TerreAdmin",
-          style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Color(0xFF0F172A), letterSpacing: -1),
+          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Color(0xFF0F172A), letterSpacing: -1),
         ),
         const Text(
           "L'administration simplifiée",
-          style: TextStyle(fontSize: 16, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: 14, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
         ),
       ],
     );
   }
 
   Widget _buildLoginForm() {
+    final isLoading = context.watch<AuthProvider>().isLoading;
+
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
@@ -220,8 +232,8 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
           ],
           const SizedBox(height: 32),
           ElevatedButton(
-            onPressed: _isLoading ? null : (_codeSent ? _verifyCode : _sendCode),
-            child: _isLoading 
+            onPressed: isLoading ? null : (_codeSent ? _verifyCode : _sendCode),
+            child: isLoading 
               ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3))
               : Text(_codeSent ? "Vérifier" : "Se connecter"),
           ),

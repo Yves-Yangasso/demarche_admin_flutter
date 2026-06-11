@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../../core/api_service.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -14,32 +14,36 @@ class _RegisterViewState extends State<RegisterView> {
   final _prenomController = TextEditingController();
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
-  final _api = ApiService();
-  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _nomController.dispose();
+    _prenomController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    super.dispose();
+  }
 
   Future<void> _register() async {
-    setState(() => _isLoading = true);
+    final authProvider = context.read<AuthProvider>();
     try {
-      final response = await _api.post("/auth/inscription", {
-        "nom": _nomController.text,
-        "prenom": _prenomController.text,
-        "telephone": _phoneController.text,
-        "email": _emailController.text,
-      });
+      final success = await authProvider.register(
+        nom: _nomController.text,
+        prenom: _prenomController.text,
+        telephone: _phoneController.text,
+        email: _emailController.text,
+      );
 
-      if (response.statusCode == 201 && mounted) {
+      if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Inscription réussie, connectez-vous.")));
         Navigator.of(context).pushReplacementNamed('/login');
       } else if (mounted) {
-        final error = jsonDecode(response.body)['message'] ?? "Erreur lors de l'inscription";
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Erreur lors de l'inscription")));
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Erreur: $e")));
       }
-    } finally {
-      setState(() => _isLoading = false);
     }
   }
 
@@ -89,6 +93,8 @@ class _RegisterViewState extends State<RegisterView> {
   }
 
   Widget _buildRegisterForm() {
+    final isLoading = context.watch<AuthProvider>().isLoading;
+
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
@@ -140,8 +146,8 @@ class _RegisterViewState extends State<RegisterView> {
           ),
           const SizedBox(height: 32),
           ElevatedButton(
-            onPressed: _isLoading ? null : _register,
-            child: _isLoading 
+            onPressed: isLoading ? null : _register,
+            child: isLoading 
               ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3))
               : const Text("S'inscrire"),
           ),

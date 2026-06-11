@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../services/dossier_service.dart';
+import 'package:provider/provider.dart';
+import '../../providers/dossier_provider.dart';
 
 class CategorySelectionView extends StatefulWidget {
   const CategorySelectionView({super.key});
@@ -9,7 +10,6 @@ class CategorySelectionView extends StatefulWidget {
 }
 
 class _CategorySelectionViewState extends State<CategorySelectionView> {
-  final DossierService _dossierService = DossierService();
   List<dynamic>? _categories;
   bool _isLoading = true;
 
@@ -21,7 +21,8 @@ class _CategorySelectionViewState extends State<CategorySelectionView> {
 
   Future<void> _fetchCategories() async {
     setState(() => _isLoading = true);
-    final categories = await _dossierService.getCategories();
+    final provider = context.read<DossierProvider>();
+    final categories = await provider.getCategories();
     setState(() {
       _categories = categories;
       _isLoading = false;

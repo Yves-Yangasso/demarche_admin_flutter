@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../services/dossier_service.dart';
+import 'package:provider/provider.dart';
+import '../../providers/dossier_provider.dart';
 
 class TypeSelectionView extends StatefulWidget {
   const TypeSelectionView({super.key});
@@ -9,7 +10,6 @@ class TypeSelectionView extends StatefulWidget {
 }
 
 class _TypeSelectionViewState extends State<TypeSelectionView> {
-  final DossierService _dossierService = DossierService();
   List<dynamic>? _types;
   bool _isLoading = true;
   String? _categoryName;
@@ -23,7 +23,8 @@ class _TypeSelectionViewState extends State<TypeSelectionView> {
   }
 
   Future<void> _fetchTypes(int categoryId) async {
-    final types = await _dossierService.getDemarches(categoryId);
+    final provider = context.read<DossierProvider>();
+    final types = await provider.getDemarches(categoryId);
     if (mounted) {
       setState(() {
         _types = types;

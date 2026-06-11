@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/models.dart';
-import '../services/dossier_service.dart';
-import 'widgets/dossier_card.dart';
+import 'package:provider/provider.dart';
+import '../providers/dossier_provider.dart';
+import '../widgets/dossier_card.dart';
 
 class DossierListView extends StatefulWidget {
   const DossierListView({super.key});
@@ -11,22 +11,11 @@ class DossierListView extends StatefulWidget {
 }
 
 class _DossierListViewState extends State<DossierListView> {
-  final DossierService _dossierService = DossierService();
-  List<Dossier>? _dossiers;
-  bool _isLoading = true;
-
   @override
   void initState() {
     super.initState();
-    _fetchDossiers();
-  }
-
-  Future<void> _fetchDossiers() async {
-    setState(() => _isLoading = true);
-    final dossiers = await _dossierService.getMesDossiers();
-    setState(() {
-      _dossiers = dossiers;
-      _isLoading = false;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<DossierProvider>().fetchDossiers();
     });
   }
 
@@ -45,22 +34,37 @@ class _DossierListViewState extends State<DossierListView> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded, color: Color(0xFF64748B), size: 22),
-            onPressed: _fetchDossiers,
+            onPressed: () => context.read<DossierProvider>().fetchDossiers(forceRefresh: true),
           ),
           const SizedBox(width: 8),
         ],
       ),
-      body: _isLoading 
-          ? const Center(child: CircularProgressIndicator(strokeWidth: 3))
-          : _dossiers == null || _dossiers!.isEmpty
-              ? _buildEmptyState()
-              : ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
-                  itemCount: _dossiers!.length,
-                  itemBuilder: (context, index) {
-                    return DossierCard(dossier: _dossiers![index]);
-                  },
-                ),
+      body: Consumer<DossierProvider>(
+        builder: (context, provider, child) {
+          if (provider.isLoading && provider.dossiers.isEmpty) {
+            return const Center(child: CircularProgressIndicator(strokeWidth: 3));
+          }
+          
+          if (provider.error != null && provider.dossiers.isEmpty) {
+            return _buildErrorState(provider);
+          }
+          
+          if (provider.dossiers.isEmpty) {
+            return _buildEmptyState();
+          }
+
+          return RefreshIndicator(
+            onRefresh: () => provider.fetchDossiers(forceRefresh: true),
+            child: ListView.builder(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
+              itemCount: provider.dossiers.length,
+              itemBuilder: (context, index) {
+                return DossierCard(dossier: provider.dossiers[index]);
+              },
+            ),
+          );
+        },
+      ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 90),
         child: FloatingActionButton.extended(
@@ -98,6 +102,31 @@ class _DossierListViewState extends State<DossierListView> {
             style: TextStyle(color: Color(0xFF64748B), fontSize: 14, fontWeight: FontWeight.w500),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState(DossierProvider provider) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline_rounded, size: 64, color: Colors.redAccent),
+            const SizedBox(height: 24),
+            Text(
+              provider.error!,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Color(0xFF0F172A), fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () => provider.fetchDossiers(forceRefresh: true),
+              child: const Text("Réessayer"),
+            ),
+          ],
+        ),
       ),
     );
   }

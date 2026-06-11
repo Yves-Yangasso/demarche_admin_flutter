@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../models/models.dart';
-import '../services/dossier_service.dart';
-import 'widgets/dossier_card.dart';
+import 'package:provider/provider.dart';
+import '../../models/models.dart';
+import '../providers/dossier_provider.dart';
+import '../widgets/dossier_card.dart';
 
 class DemarcheInfiniteListView extends StatefulWidget {
   const DemarcheInfiniteListView({super.key});
@@ -11,7 +12,6 @@ class DemarcheInfiniteListView extends StatefulWidget {
 }
 
 class _DemarcheInfiniteListViewState extends State<DemarcheInfiniteListView> {
-  final DossierService _dossierService = DossierService();
   final List<Dossier> _dossiers = [];
   final ScrollController _scrollController = ScrollController();
   
@@ -35,17 +35,20 @@ class _DemarcheInfiniteListViewState extends State<DemarcheInfiniteListView> {
 
     setState(() => _isLoading = true);
 
-    final newDossiers = await _dossierService.getMesDossiersPagines(_currentPage, 10);
+    final provider = context.read<DossierProvider>();
+    final newDossiers = await provider.fetchPaginated(_currentPage, 10);
     
-    setState(() {
-      _isLoading = false;
-      if (newDossiers.isEmpty) {
-        _hasMore = false;
-      } else {
-        _currentPage++;
-        _dossiers.addAll(newDossiers);
-      }
-    });
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+        if (newDossiers.isEmpty) {
+          _hasMore = false;
+        } else {
+          _currentPage++;
+          _dossiers.addAll(newDossiers);
+        }
+      });
+    }
   }
 
   @override

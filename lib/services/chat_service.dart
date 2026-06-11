@@ -1,11 +1,11 @@
 import 'dart:convert';
-import '../core/api_service.dart';
+import '../core/network/api_client.dart';
 
 class ChatService {
-  final ApiService _api = ApiService();
+  final ApiClient _apiClient = ApiClient();
 
   Future<Map<String, dynamic>> sendMessage(String message) async {
-    final response = await _api.post("/ia/chatbot", {"message": message});
+    final response = await _apiClient.post("/ia/chatbot", {"message": message});
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     }
