@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:terreadmin_mobile/presentation/views/form_demande_citoyen/form_demande_citoyen.dart';
+import 'package:terreadmin_mobile/presentation/views/form_new/screens/new_request_flow.dart';
+
 
 import 'core/network/api_client.dart';
 import 'data/repositories/auth_repository_impl.dart';
@@ -10,7 +11,7 @@ import 'presentation/providers/auth_provider.dart';
 import 'presentation/providers/dossier_provider.dart';
 
 import 'presentation/views/main_navigation.dart';
-import 'presentation/views/auth/login_view.dart';
+
 import 'presentation/views/auth/register_view.dart';
 import 'presentation/views/demarche_infinite_list_view.dart';
 import 'presentation/views/new_demarche/category_selection_view.dart';
@@ -92,7 +93,7 @@ class TerreAdminApp extends StatelessWidget {
         '/splash': (context) => const SplashView(),
         //'splash': (context) => const FormDemandeView(),
         '/onboarding': (context) => const OnboardingView(),
-        '/login':(context) => const FormDemandeView(),
+       '/login':(context) => const NewRequestFlow(),
         '/register': (context) => const RegisterView(),
 
         '/home': (context) => const MainNavigation(),
