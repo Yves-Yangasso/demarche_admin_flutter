@@ -5,8 +5,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiClient {
   final String baseUrl = Platform.isAndroid 
-      ? "http://10.0.2.2:5001/api" 
-      : "http://localhost:5001/api";
+      ? "https://sunudekk-api.djazael.com/api" 
+      //? "http://192.168.1.14:5001/api"
+      : "http://192.168.1.14:5001/api";
+
+  
+     
+
   final _storage = const FlutterSecureStorage();
 
   Future<String?> getToken() async {

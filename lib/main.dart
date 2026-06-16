@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:terreadmin_mobile/presentation/views/form_demande_citoyen/form_demande_citoyen.dart';
 
 import 'core/network/api_client.dart';
 import 'data/repositories/auth_repository_impl.dart';
@@ -42,7 +43,7 @@ class TerreAdminApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TerreAdmin',
+      title: 'Sunu Dekk',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
@@ -89,12 +90,15 @@ class TerreAdminApp extends StatelessWidget {
       initialRoute: '/splash',
       routes: {
         '/splash': (context) => const SplashView(),
+        //'splash': (context) => const FormDemandeView(),
         '/onboarding': (context) => const OnboardingView(),
-        '/login': (context) => const LoginView(),
+        '/login':(context) => const FormDemandeView(),
         '/register': (context) => const RegisterView(),
+
         '/home': (context) => const MainNavigation(),
         '/demarches_toutes': (context) => const DemarcheInfiniteListView(),
         '/nouvelle_demande': (context) => const CategorySelectionView(),
+       // "/form_demande" : (context) => const FormDemandeView(),
         '/demarche_types': (context) => const TypeSelectionView(),
         '/documents': (context) => const DocumentsView(),
         '/scan_qr': (context) => const QrScannerView(),

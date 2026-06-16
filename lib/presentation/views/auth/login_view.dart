@@ -126,7 +126,7 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
         ),
         const SizedBox(height: 16),
         const Text(
-          "TerreAdmin",
+          "Sunu Dëkk",
           style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Color(0xFF0F172A), letterSpacing: -1),
         ),
         const Text(
@@ -176,7 +176,7 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
                 labelColor: const Color(0xFF2563EB),
                 unselectedLabelColor: const Color(0xFF64748B),
                 labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
-                tabs: const [Tab(text: "Téléphone"), Tab(text: "Email")],
+                tabs: const [  Tab(text: "Téléphone"), Tab(text: "Email")],
                 dividerColor: Colors.transparent,
               ),
             ),

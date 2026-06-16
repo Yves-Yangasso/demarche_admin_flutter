@@ -43,6 +43,8 @@ class _MainNavigationState extends State<MainNavigation> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            //a enlevé et mettre au niveau de la list de demande
+           
             _buildNavItem(0, Icons.home_rounded, 'Accueil'),
             _buildNavItem(1, Icons.folder_rounded, 'Dossiers'),
             _buildNavItem(2, Icons.chat_bubble_rounded, 'IA'),
@@ -68,6 +70,7 @@ class _MainNavigationState extends State<MainNavigation> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            
             Icon(
               icon,
               color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.5),
