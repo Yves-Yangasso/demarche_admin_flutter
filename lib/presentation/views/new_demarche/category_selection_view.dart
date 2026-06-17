@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/dossier_provider.dart';
+import '../../../core/app_localizations.dart';
 
 class CategorySelectionView extends StatefulWidget {
   const CategorySelectionView({super.key});
@@ -31,10 +32,11 @@ class _CategorySelectionViewState extends State<CategorySelectionView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        title: const Text("Nouvelle demande", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
+        title: Text(l10n.newRequest, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
         backgroundColor: const Color(0xFFF8FAFC),
         elevation: 0,
         centerTitle: false,
@@ -43,7 +45,7 @@ class _CategorySelectionViewState extends State<CategorySelectionView> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator(strokeWidth: 3))
           : _categories == null || _categories!.isEmpty
-              ? _buildEmptyState()
+              ? _buildEmptyState(l10n)
               : GridView.builder(
                   padding: const EdgeInsets.all(20),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -94,12 +96,12 @@ class _CategorySelectionViewState extends State<CategorySelectionView> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2563EB).withValues(alpha: 0.1),
+                    color: const Color(0xFF176848).withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     _getCategoryIcon(cat['nom']),
-                    color: const Color(0xFF2563EB),
+                    color: const Color(0xFF176848),
                     size: 32,
                   ),
                 ),
@@ -127,14 +129,14 @@ class _CategorySelectionViewState extends State<CategorySelectionView> {
     return Icons.category_rounded;
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(AppLocalizations l10n) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.category_rounded, size: 64, color: Colors.grey.shade300),
           const SizedBox(height: 16),
-          const Text("Aucune catégorie disponible", style: TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF64748B))),
+          Text(l10n.chooseCategory, style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF64748B))),
         ],
       ),
     );

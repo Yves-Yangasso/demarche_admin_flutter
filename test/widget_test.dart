@@ -7,15 +7,15 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:terreadmin_mobile/main.dart';
+import 'package:sunudekk_mobile/main.dart';
 
 void main() {
   testWidgets('Login screen smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const TerreAdminApp());
+    await tester.pumpWidget(const SunuDekkApp());
 
     // Verify that our login screen is shown.
-    expect(find.text('Bienvenue sur TerreAdmin'), findsOneWidget);
+    expect(find.text('Bienvenue sur SunuDekk'), findsOneWidget);
     expect(find.text('Connectez-vous pour accéder à vos démarches'), findsOneWidget);
   });
 }

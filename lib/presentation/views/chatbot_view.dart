@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../services/chat_service.dart';
+import 'package:provider/provider.dart';
+import '../providers/ia_provider.dart';
 
 class ChatBotView extends StatefulWidget {
   const ChatBotView({super.key});
@@ -9,69 +10,94 @@ class ChatBotView extends StatefulWidget {
 }
 
 class _ChatBotViewState extends State<ChatBotView> {
-  final ChatService _chatService = ChatService();
   final TextEditingController _controller = TextEditingController();
-  final List<Map<String, dynamic>> _messages = [
-    {"text": "Bonjour. Je suis votre assistant numérique. Comment puis-je vous aider dans vos démarches administratives ?", "isUser": false}
-  ];
-  bool _isLoading = false;
 
   void _handleSend() async {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
 
-    setState(() {
-      _messages.add({"text": text, "isUser": true});
-      _isLoading = true;
-      _controller.clear();
-    });
-
-    try {
-      final response = await _chatService.sendMessage(text);
-      setState(() {
-        _messages.add({"text": response['reponse'], "isUser": false});
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _messages.add({"text": "Une erreur est survenue lors de la communication avec le serveur.", "isUser": false});
-        _isLoading = false;
-      });
-    }
+    _controller.clear();
+    await context.read<IAProvider>().sendMessage(text);
   }
 
   @override
   Widget build(BuildContext context) {
+    final iaProvider = context.watch<IAProvider>();
+    final messages = iaProvider.chatMessages;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text('Assistant TerreAdmin', style: TextStyle(color: Color(0xFF0F172A), fontSize: 16, fontWeight: FontWeight.bold)),
+        title: const Text('Assistant SunuDekk', style: TextStyle(color: Color(0xFF0F172A), fontSize: 16, fontWeight: FontWeight.bold)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF0F172A)),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          IconButton(
+            onPressed: () => iaProvider.clearChat(),
+            icon: const Icon(Icons.delete_sweep_rounded, color: Color(0xFF64748B)),
+          ),
+        ],
       ),
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(20),
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                final msg = _messages[index];
-                return _ChatBubble(text: msg['text'], isUser: msg['isUser']);
-              },
-            ),
+            child: messages.isEmpty 
+              ? _buildWelcome()
+              : ListView.builder(
+                padding: const EdgeInsets.all(20),
+                itemCount: messages.length,
+                itemBuilder: (context, index) {
+                  final msg = messages[index];
+                  return _ChatBubble(
+                    text: msg['content'], 
+                    isUser: msg['role'] == 'user',
+                  );
+                },
+              ),
           ),
-          if (_isLoading) 
+          if (iaProvider.isLoading) 
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 8),
               child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
             ),
           _buildInput(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildWelcome() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(40.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: const Color(0xFF176848).withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.smart_toy_rounded, color: Color(0xFF176848), size: 48),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              "Bonjour !",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              "Je suis votre assistant numérique. Comment puis-je vous aider dans vos démarches administratives aujourd'hui ?",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, color: Color(0xFF64748B), height: 1.5),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -106,7 +132,7 @@ class _ChatBotViewState extends State<ChatBotView> {
           ),
           const SizedBox(width: 8),
           Material(
-            color: const Color(0xFF2563EB),
+            color: const Color(0xFF176848),
             borderRadius: BorderRadius.circular(24),
             child: IconButton(
               icon: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
@@ -128,26 +154,26 @@ class _ChatBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isUser) ...[
             Container(
-              width: 32,
-              height: 32,
+              width: 28,
+              height: 28,
               decoration: BoxDecoration(
-                color: const Color(0xFF2563EB),
+                color: const Color(0xFF176848),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.smart_toy_outlined, color: Colors.white, size: 18),
+              child: const Icon(Icons.smart_toy_outlined, color: Colors.white, size: 16),
             ),
             const SizedBox(width: 8),
           ],
           Flexible(
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
                 color: isUser ? const Color(0xFF0F172A) : Colors.white,
                 borderRadius: BorderRadius.circular(12).copyWith(
@@ -160,7 +186,7 @@ class _ChatBubble extends StatelessWidget {
                 text,
                 style: TextStyle(
                   color: isUser ? Colors.white : const Color(0xFF1E293B),
-                  fontSize: 14,
+                  fontSize: 13,
                   height: 1.4,
                 ),
               ),

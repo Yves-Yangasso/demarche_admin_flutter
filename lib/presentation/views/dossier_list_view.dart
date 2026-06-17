@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 import '../providers/dossier_provider.dart';
 import '../widgets/dossier_card.dart';
 
+import '../../workflow/status.dart';
+import '../../core/app_localizations.dart';
+
 class DossierListView extends StatefulWidget {
   const DossierListView({super.key});
 
@@ -22,15 +25,16 @@ class _DossierListViewState extends State<DossierListView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
         backgroundColor: const Color(0xFFF8FAFC),
         elevation: 0,
         centerTitle: false,
-        title: const Text(
-          'Mes Dossiers',
-          style: TextStyle(color: Color(0xFF0F172A), fontWeight: FontWeight.w900, fontSize: 22),
+        title: Text(
+          l10n.allMyDossiers,
+          style: const TextStyle(color: Color(0xFF0F172A), fontWeight: FontWeight.w900, fontSize: 22),
         ),
         actions: [
           IconButton(
@@ -47,11 +51,11 @@ class _DossierListViewState extends State<DossierListView> {
           }
           
           if (provider.error != null && provider.dossiers.isEmpty) {
-            return _buildErrorState(provider);
+            return _buildErrorState(provider, l10n);
           }
           
           if (provider.dossiers.isEmpty) {
-            return _buildEmptyState();
+            return _buildEmptyState(l10n);
           }
 
           return RefreshIndicator(
@@ -60,7 +64,17 @@ class _DossierListViewState extends State<DossierListView> {
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
               itemCount: provider.dossiers.length,
               itemBuilder: (context, index) {
-                return DossierCard(dossier: provider.dossiers[index]);
+                final dossier = provider.dossiers[index];
+                return DossierCard(
+                  dossier: dossier,
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context, 
+                      '/suivi_dossier', 
+                      arguments: DossierTracking.fromDossier(dossier),
+                    );
+                  },
+                );
               },
             ),
           );
@@ -69,17 +83,17 @@ class _DossierListViewState extends State<DossierListView> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 90),
         child: FloatingActionButton.extended(
-          backgroundColor: const Color(0xFF2563EB),
+          backgroundColor: const Color(0xFF176848),
           elevation: 4,
           onPressed: () => Navigator.pushNamed(context, '/nouvelle_demande'),
-          label: const Text("Nouvelle demande", style: TextStyle(fontWeight: FontWeight.w800, color: Colors.white)),
+          label: Text(l10n.newRequest, style: const TextStyle(fontWeight: FontWeight.w800, color: Colors.white)),
           icon: const Icon(Icons.add_rounded, color: Colors.white),
         ),
       ),
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(AppLocalizations l10n) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -93,24 +107,24 @@ class _DossierListViewState extends State<DossierListView> {
               color: Color(0xFFEFF6FF),
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.folder_open_rounded, size: 64, color: const Color(0xFF2563EB).withValues(alpha: 0.5)),
+            child: Icon(Icons.folder_open_rounded, size: 64, color: const Color(0xFF176848).withValues(alpha: 0.5)),
           ),
           const SizedBox(height: 24),
-          const Text(
-            'Aucun dossier trouvé',
-            style: TextStyle(color: Color(0xFF0F172A), fontSize: 18, fontWeight: FontWeight.w800),
+          Text(
+            l10n.noDossier,
+            style: const TextStyle(color: Color(0xFF0F172A), fontSize: 18, fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Commencez par créer votre première demande.',
-            style: TextStyle(color: Color(0xFF64748B), fontSize: 14, fontWeight: FontWeight.w500),
+          Text(
+            l10n.startFirst,
+            style: const TextStyle(color: Color(0xFF64748B), fontSize: 14, fontWeight: FontWeight.w500),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildErrorState(DossierProvider provider) {
+  Widget _buildErrorState(DossierProvider provider, AppLocalizations l10n) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
@@ -127,7 +141,7 @@ class _DossierListViewState extends State<DossierListView> {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () => provider.fetchDossiers(forceRefresh: true),
-              child: const Text("Réessayer"),
+              child: Text(l10n.retry),
             ),
           ],
         ),

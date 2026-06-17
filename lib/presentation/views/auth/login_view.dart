@@ -110,28 +110,28 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: const Color(0xFF2563EB),
+            color: const Color(0xFF176848),
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF2563EB).withValues(alpha: 0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
+                color: const Color(0xFF176848).withValues(alpha: 0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
               )
             ],
           ),
-          child: const Icon(Icons.account_balance_rounded, color: Colors.white, size: 40),
+          child: const Icon(Icons.account_balance_rounded, color: Colors.white, size: 32),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         const Text(
           "Sunu Dëkk",
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Color(0xFF0F172A), letterSpacing: -1),
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Color(0xFF0F172A), letterSpacing: -0.5),
         ),
         const Text(
           "L'administration simplifiée",
-          style: TextStyle(fontSize: 14, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: 12, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
         ),
       ],
     );
@@ -141,15 +141,15 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
     final isLoading = context.watch<AuthProvider>().isLoading;
 
     return Container(
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
             color: const Color(0xFF0F172A).withValues(alpha: 0.05),
-            blurRadius: 30,
-            offset: const Offset(0, 15),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           )
         ],
       ),
@@ -158,48 +158,50 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
         children: [
           if (!_codeSent) ...[
             Container(
-              height: 48,
-              padding: const EdgeInsets.all(4),
+              height: 40,
+              padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
                 color: const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: TabBar(
                 controller: _tabController,
                 indicator: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(8),
                   boxShadow: [
                     BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))
                   ],
                 ),
-                labelColor: const Color(0xFF2563EB),
+                labelColor: const Color(0xFF176848),
                 unselectedLabelColor: const Color(0xFF64748B),
-                labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
                 tabs: const [  Tab(text: "Téléphone"), Tab(text: "Email")],
                 dividerColor: Colors.transparent,
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
             SizedBox(
-              height: 70,
+              height: 60,
               child: TabBarView(
                 controller: _tabController,
                 children: [
                   TextField(
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
+                    style: const TextStyle(fontSize: 14),
                     decoration: const InputDecoration(
                       hintText: "06 00 00 00 00",
-                      prefixIcon: Icon(Icons.phone_iphone_rounded),
+                      prefixIcon: Icon(Icons.phone_iphone_rounded, size: 20),
                     ),
                   ),
                   TextField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
+                    style: const TextStyle(fontSize: 14),
                     decoration: const InputDecoration(
                       hintText: "exemple@mail.com",
-                      prefixIcon: Icon(Icons.alternate_email_rounded),
+                      prefixIcon: Icon(Icons.alternate_email_rounded, size: 20),
                     ),
                   ),
                 ],
@@ -209,42 +211,42 @@ class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMix
             const Text(
               "Code de vérification",
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
               "Saisissez le code reçu par ${_tabController.index == 0 ? 'SMS' : 'Email'}",
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 14, color: Color(0xFF64748B)),
+              style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
             TextField(
               controller: _codeController,
               keyboardType: TextInputType.number,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 24, letterSpacing: 8, fontWeight: FontWeight.w900),
+              style: const TextStyle(fontSize: 20, letterSpacing: 6, fontWeight: FontWeight.w900),
               decoration: const InputDecoration(hintText: "000000"),
             ),
             TextButton(
               onPressed: () => setState(() => _codeSent = false),
-              child: const Text("Changer de méthode", style: TextStyle(fontWeight: FontWeight.w700)),
+              child: const Text("Changer de méthode", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
             ),
           ],
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
           ElevatedButton(
             onPressed: isLoading ? null : (_codeSent ? _verifyCode : _sendCode),
             child: isLoading 
-              ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3))
+              ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
               : Text(_codeSent ? "Vérifier" : "Se connecter"),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("Nouveau ici ?", style: TextStyle(color: Color(0xFF64748B))),
+              const Text("Nouveau ici ?", style: TextStyle(color: Color(0xFF64748B), fontSize: 13)),
               TextButton(
                 onPressed: () => Navigator.of(context).pushNamed('/register'),
-                child: const Text("Créer un compte", style: TextStyle(fontWeight: FontWeight.w800)),
+                child: const Text("Créer un compte", style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13)),
               ),
             ],
           ),

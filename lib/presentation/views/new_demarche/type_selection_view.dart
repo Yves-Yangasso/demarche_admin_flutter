@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/dossier_provider.dart';
+import '../../../core/app_localizations.dart';
 
 class TypeSelectionView extends StatefulWidget {
   const TypeSelectionView({super.key});
@@ -19,12 +20,17 @@ class _TypeSelectionViewState extends State<TypeSelectionView> {
     super.didChangeDependencies();
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     _categoryName = args['nom'];
-    _fetchTypes(args['id']);
+    final orgId = args['organisation_id'] as int?;
+    final catId = args['id'] as int?;
+    _orgArgs = args;
+    _fetchTypes(catId, orgId);
   }
 
-  Future<void> _fetchTypes(int categoryId) async {
+  Map<String, dynamic>? _orgArgs;
+
+  Future<void> _fetchTypes(int? categoryId, int? organisationId) async {
     final provider = context.read<DossierProvider>();
-    final types = await provider.getDemarches(categoryId);
+    final types = await provider.getDemarches(categoryId, organisationId: organisationId);
     if (mounted) {
       setState(() {
         _types = types;
@@ -35,10 +41,11 @@ class _TypeSelectionViewState extends State<TypeSelectionView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        title: Text(_categoryName ?? "Démarches", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
+        title: Text(_categoryName ?? l10n.chooseDemarcheType, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
         backgroundColor: const Color(0xFFF8FAFC),
         elevation: 0,
         iconTheme: const IconThemeData(color: Color(0xFF0F172A)),
@@ -46,7 +53,7 @@ class _TypeSelectionViewState extends State<TypeSelectionView> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator(strokeWidth: 3))
           : _types == null || _types!.isEmpty
-              ? _buildEmptyState()
+              ? _buildEmptyState(l10n)
               : ListView.separated(
                   padding: const EdgeInsets.all(20),
                   itemCount: _types!.length,
@@ -62,9 +69,7 @@ class _TypeSelectionViewState extends State<TypeSelectionView> {
   Widget _buildTypeCard(dynamic type) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
           BoxShadow(
             color: const Color(0xFF0F172A).withValues(alpha: 0.03),
@@ -73,48 +78,60 @@ class _TypeSelectionViewState extends State<TypeSelectionView> {
           )
         ],
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        title: Text(
-          type['nom'],
-          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: Color(0xFF0F172A)),
+      child: Material(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: Color(0xFFE2E8F0)),
         ),
-        subtitle: const Padding(
-          padding: EdgeInsets.only(top: 4),
-          child: Text(
-            "Service administratif • Disponibilité immédiate",
-            style: TextStyle(fontSize: 12, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
+        clipBehavior: Clip.antiAlias,
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          title: Text(
+            type['nom'],
+            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: Color(0xFF0F172A)),
           ),
-        ),
-        trailing: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF1F5F9),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Color(0xFF0F172A)),
-        ),
-        onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("Formulaire pour : ${type['nom']} bientôt disponible"),
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              AppLocalizations.of(context).dossierType,
+              style: const TextStyle(fontSize: 12, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
             ),
-          );
-        },
+          ),
+          trailing: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Color(0xFF0F172A)),
+          ),
+          onTap: () {
+            Navigator.pushNamed(
+              context, 
+              '/request_stepper', 
+              arguments: {
+                'type_id': type['id'],
+                'type_nom': type['nom'],
+                'prix': type['prix'] ?? 0,
+                'organisation_nom': type['organisation_nom'] ?? _orgArgs?['organisation_nom'] ?? '',
+                'categorie_nom': _categoryName,
+              }
+            );
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(AppLocalizations l10n) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.assignment_rounded, size: 64, color: Colors.grey.shade300),
           const SizedBox(height: 16),
-          const Text("Aucun service disponible", style: TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF64748B))),
+          Text(l10n.chooseDemarcheType, style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF64748B))),
         ],
       ),
     );

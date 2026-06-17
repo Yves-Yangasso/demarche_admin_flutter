@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:terreadmin_mobile/workflow/status.dart';
+import 'package:sunudekk_mobile/workflow/status.dart';
 
 class SuiviDossierScreen extends StatelessWidget {
  final DossierTracking dossier;
@@ -215,7 +215,15 @@ class SuiviDossierScreen extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            if (dossier.originalDossier != null) {
+              Navigator.pushNamed(
+                context,
+                '/dossier_detail',
+                arguments: dossier.originalDossier,
+              );
+            }
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF2E7D32),
             padding: const EdgeInsets.symmetric(vertical: 16),

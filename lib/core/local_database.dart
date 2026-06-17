@@ -10,7 +10,7 @@ class LocalDatabase {
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('terreadmin.db');
+    _database = await _initDB('sunudekk.db');
     return _database!;
   }
 

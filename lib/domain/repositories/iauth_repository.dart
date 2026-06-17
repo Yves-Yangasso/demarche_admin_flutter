@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import '../../models/models.dart';
 
 abstract class IAuthRepository {
   Future<void> sendPhoneOtp(String telephone);
@@ -11,6 +12,13 @@ abstract class IAuthRepository {
     required String telephone,
     required String email,
   });
+  Future<Utilisateur?> getCurrentUser();
   Future<String?> getToken();
   Future<void> logout();
+
+  /// Met à jour le profil de l'utilisateur courant (PATCH /auth/me)
+  Future<Utilisateur> updateProfile(Map<String, dynamic> data);
+
+  /// Upload une photo de profil (POST /auth/me/photo)
+  Future<String> uploadPhoto(String filePath);
 }

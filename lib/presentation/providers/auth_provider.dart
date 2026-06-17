@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../models/models.dart';
 import '../../domain/repositories/iauth_repository.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -15,6 +16,9 @@ class AuthProvider with ChangeNotifier {
   String? _token;
   bool get isAuthenticated => _token != null;
 
+  Utilisateur? _currentUser;
+  Utilisateur? get currentUser => _currentUser;
+
   void clearError() {
     _error = null;
     notifyListeners();
@@ -22,6 +26,17 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> checkAuth() async {
     _token = await _repository.getToken();
+    if (_token != null) {
+      await fetchUser();
+      if (_currentUser == null) {
+        await logout();
+      }
+    }
+    notifyListeners();
+  }
+
+  Future<void> fetchUser() async {
+    _currentUser = await _repository.getCurrentUser();
     notifyListeners();
   }
 
@@ -115,9 +130,47 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  /// Met à jour le profil de l'utilisateur connecté
+  Future<bool> updateProfile(Map<String, dynamic> data) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+    try {
+      final updated = await _repository.updateProfile(data);
+      _currentUser = updated;
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Upload une photo de profil et met à jour l'utilisateur courant
+  Future<bool> uploadPhoto(String filePath) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+    try {
+      final photoUrl = await _repository.uploadPhoto(filePath);
+      // Rafraîchir l'utilisateur pour refléter la nouvelle photo
+      await fetchUser();
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> logout() async {
     await _repository.logout();
     _token = null;
+    _currentUser = null;
     notifyListeners();
   }
 }

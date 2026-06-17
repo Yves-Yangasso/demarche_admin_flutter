@@ -1,4 +1,4 @@
-import 'package:terreadmin_mobile/workflow/status.dart';
+import 'package:sunudekk_mobile/workflow/status.dart';
 
 final exampleDossier = DossierTracking(
   numeroDossier: "D2026-001245",

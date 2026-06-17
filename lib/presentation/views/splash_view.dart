@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 import 'dart:async';
 
 class SplashView extends StatefulWidget {
@@ -23,11 +25,24 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
     
     _controller.forward();
 
-    Timer(const Duration(seconds: 3), () {
-      if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/onboarding');
-      }
-    });
+    _checkAuthAndNavigate();
+  }
+
+  Future<void> _checkAuthAndNavigate() async {
+    final authProvider = context.read<AuthProvider>();
+    await authProvider.checkAuth();
+    
+    if (mounted) {
+      Timer(const Duration(seconds: 2), () {
+        if (mounted) {
+          if (authProvider.isAuthenticated) {
+            Navigator.of(context).pushReplacementNamed('/home');
+          } else {
+            Navigator.of(context).pushReplacementNamed('/onboarding');
+          }
+        }
+      });
+    }
   }
 
   @override
@@ -39,7 +54,7 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF2563EB),
+      backgroundColor: const Color(0xFF176848),
       body: FadeTransition(
         opacity: _fadeAnimation,
         child: Center(
@@ -59,15 +74,15 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
                     )
                   ],
                 ),
-                child: const Icon(
-                  Icons.account_balance_rounded,
-                  size: 64,
-                  color: Color(0xFF2563EB),
+                child: Image.asset(
+                  'assets/images/logo.png',
+                  width: 64,
+                  height: 64,
                 ),
               ),
               const SizedBox(height: 24),
               const Text(
-                "TerreAdmin",
+                "SunuDekk",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 36,

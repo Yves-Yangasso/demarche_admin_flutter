@@ -56,7 +56,7 @@ class QrScannerView extends StatelessWidget {
         width: 20,
         height: 20,
         decoration: BoxDecoration(
-          color: const Color(0xFF2563EB),
+          color: const Color(0xFF176848),
           borderRadius: BorderRadius.circular(4),
         ),
       ),

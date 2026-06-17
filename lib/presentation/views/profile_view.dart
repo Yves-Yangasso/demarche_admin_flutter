@@ -7,6 +7,8 @@ class ProfileView extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<AuthProvider>().currentUser;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
@@ -18,23 +20,42 @@ class ProfileView extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          const Center(
+          Center(
             child: Column(
               children: [
                 CircleAvatar(
                   radius: 50,
-                  backgroundColor: Color(0xFF2563EB),
-                  child: Icon(Icons.person_rounded, size: 50, color: Colors.white),
+                  backgroundColor: const Color(0xFF176848),
+                  backgroundImage: user?.photoUrl != null ? NetworkImage(user!.photoUrl!) : null,
+                  child: user?.photoUrl == null ? const Icon(Icons.person_rounded, size: 50, color: Colors.white) : null,
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Text(
-                  "Jean Dupont",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Color(0xFF0F172A)),
+                  user?.displayName ?? "Citoyen",
+                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Color(0xFF0F172A)),
                 ),
                 Text(
-                  "jean.dupont@email.com",
-                  style: TextStyle(fontSize: 14, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
+                  user?.email ?? "",
+                  style: const TextStyle(fontSize: 14, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
                 ),
+                if (user?.qrCodeUrl != null) ...[
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF176848).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.qr_code_2_rounded, size: 16, color: Color(0xFF176848)),
+                        SizedBox(width: 8),
+                        Text("Ma Carte d'Identité Numérique", style: TextStyle(color: Color(0xFF176848), fontWeight: FontWeight.w700, fontSize: 12)),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -68,18 +89,21 @@ class ProfileView extends StatelessWidget {
   }
 
   Widget _buildProfileOption(IconData icon, String title) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Material(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
-      child: ListTile(
-        leading: Icon(icon, color: const Color(0xFF64748B)),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
-        trailing: const Icon(Icons.chevron_right_rounded),
-        onTap: () {},
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: Color(0xFFE2E8F0)),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: ListTile(
+          leading: Icon(icon, color: const Color(0xFF64748B)),
+          title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+          trailing: const Icon(Icons.chevron_right_rounded),
+          onTap: () {},
+        ),
       ),
     );
   }

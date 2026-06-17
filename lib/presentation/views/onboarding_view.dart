@@ -16,7 +16,7 @@ class _OnboardingViewState extends State<OnboardingView> {
       title: "Simplifiez vos démarches",
       description: "Plus besoin de vous déplacer. Gérez toutes vos demandes administratives depuis votre smartphone.",
       icon: Icons.speed_rounded,
-      color: const Color(0xFF2563EB),
+      color: const Color(0xFF176848),
     ),
     OnboardingContent(
       title: "Suivi en temps réel",
@@ -104,7 +104,7 @@ class _OnboardingViewState extends State<OnboardingView> {
                         height: 8,
                         width: _currentPage == index ? 24 : 8,
                         decoration: BoxDecoration(
-                          color: _currentPage == index ? const Color(0xFF2563EB) : const Color(0xFFE2E8F0),
+                          color: _currentPage == index ? const Color(0xFF176848) : const Color(0xFFE2E8F0),
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
