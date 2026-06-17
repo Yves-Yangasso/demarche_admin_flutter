@@ -188,26 +188,28 @@ class _NotificationsViewState extends State<NotificationsView> {
 
   Widget _buildEmpty(AppLocalizations l10n) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(28),
-            decoration: BoxDecoration(
-              color: const Color(0xFFEFF6FF),
-              shape: BoxShape.circle,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(28),
+              decoration: BoxDecoration(
+                color: const Color(0xFFEFF6FF),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.notifications_none_rounded, size: 52, color: Color(0xFF176848)),
             ),
-            child: const Icon(Icons.notifications_none_rounded, size: 52, color: Color(0xFF176848)),
-          ),
-          const SizedBox(height: 20),
-          Text(l10n.noNotifications,
-              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: Color(0xFF0F172A))),
-          const SizedBox(height: 8),
-          const Text(
-            'Vous verrez ici toutes vos notifications.',
-            style: TextStyle(fontSize: 14, color: Color(0xFF64748B)),
-          ),
-        ],
+            const SizedBox(height: 20),
+            Text(l10n.noNotifications,
+                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: Color(0xFF0F172A))),
+            const SizedBox(height: 8),
+            const Text(
+              'Vous verrez ici toutes vos notifications.',
+              style: TextStyle(fontSize: 14, color: Color(0xFF64748B)),
+            ),
+          ],
+        ),
       ),
     );
   }

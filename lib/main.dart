@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import 'core/app_localizations.dart';
+import 'core/app_theme.dart';
 import 'core/network/api_client.dart';
 import 'data/repositories/auth_repository_impl.dart';
 import 'data/repositories/dossier_repository_impl.dart';
@@ -91,68 +91,7 @@ class SunuDekkApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
 
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF176848),
-          primary: const Color(0xFF176848),
-          surface: const Color(0xFFF8FAFC),
-        ),
-        textTheme: GoogleFonts.interTextTheme().copyWith(
-          displayLarge: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
-          titleLarge: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-          bodyLarge: const TextStyle(fontSize: 14),
-          bodyMedium: const TextStyle(fontSize: 13),
-          labelLarge: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-        ),
-        cardTheme: CardThemeData(
-          elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          color: Colors.white,
-          margin: EdgeInsets.zero,
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFF176848), width: 2),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1.5),
-          ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          hintStyle: const TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
-          labelStyle: const TextStyle(fontSize: 13, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            elevation: 0,
-            backgroundColor: const Color(0xFF176848),
-            foregroundColor: Colors.white,
-            minimumSize: const Size.fromHeight(48),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-          ),
-        ),
-        outlinedButtonTheme: OutlinedButtonThemeData(
-          style: OutlinedButton.styleFrom(
-            minimumSize: const Size.fromHeight(48),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            side: const BorderSide(color: Color(0xFFE2E8F0)),
-            textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-          ),
-        ),
-      ),
+      theme: AppTheme.themeData,
 
       initialRoute: '/splash',
       routes: {

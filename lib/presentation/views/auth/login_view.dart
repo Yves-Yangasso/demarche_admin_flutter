@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../core/app_theme.dart';
 import '../../providers/auth_provider.dart';
 
 class LoginView extends StatefulWidget {
@@ -9,249 +10,335 @@ class LoginView extends StatefulWidget {
   State<LoginView> createState() => _LoginViewState();
 }
 
-class _LoginViewState extends State<LoginView> with SingleTickerProviderStateMixin {
+class _LoginViewState extends State<LoginView>
+    with SingleTickerProviderStateMixin {
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
-  final _codeController = TextEditingController();
-  
-  bool _codeSent = false;
-  late TabController _tabController;
+  final _codeController  = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
+  bool _codeSent = false;
+  int  _selectedTab = 0; // 0 = Téléphone, 1 = Email
 
   @override
   void dispose() {
-    _tabController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
     _codeController.dispose();
     super.dispose();
   }
 
+  // ─── Actions ────────────────────────────────────────────────────────────
+
   Future<void> _sendCode() async {
-    final authProvider = context.read<AuthProvider>();
+    final auth = context.read<AuthProvider>();
     try {
-      if (_tabController.index == 0) {
-        await authProvider.sendPhoneOtp(_phoneController.text);
+      if (_selectedTab == 0) {
+        await auth.sendPhoneOtp(_phoneController.text.trim());
       } else {
-        await authProvider.sendEmailOtp(_emailController.text);
+        await auth.sendEmailOtp(_emailController.text.trim());
       }
-      setState(() => _codeSent = true);
+      if (mounted) setState(() => _codeSent = true);
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.redAccent,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
+      _showError(e.toString());
     }
   }
 
   Future<void> _verifyCode() async {
-    final authProvider = context.read<AuthProvider>();
+    final auth = context.read<AuthProvider>();
     try {
-      bool success = _tabController.index == 0 
-        ? await authProvider.verifyPhoneOtp(_phoneController.text, _codeController.text)
-        : await authProvider.verifyEmailOtp(_emailController.text, _codeController.text);
+      final success = _selectedTab == 0
+          ? await auth.verifyPhoneOtp(
+              _phoneController.text.trim(), _codeController.text.trim())
+          : await auth.verifyEmailOtp(
+              _emailController.text.trim(), _codeController.text.trim());
 
       if (success && mounted) {
         Navigator.of(context).pushReplacementNamed('/home');
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.redAccent,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
+      _showError(e.toString());
     }
   }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppTheme.error,
+      ),
+    );
+  }
+
+  // ─── Build ───────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFF8FAFC), Color(0xFFEFF6FF)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                children: [
-                  _buildLogo(),
-                  const SizedBox(height: 40),
-                  _buildLoginForm(),
-                ],
-              ),
-            ),
+      backgroundColor: AppTheme.background,
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            child: _buildCard(),
           ),
         ),
       ),
     );
   }
 
+  // ─── Logo ────────────────────────────────────────────────────────────────
+
   Widget _buildLogo() {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
+    return Image.asset(
+      'assets/images/logo.png',
+      width: 115,
+      height: 115,
+      fit: BoxFit.contain,
+    );
+  }
+
+  // ─── Carte principale ────────────────────────────────────────────────────
+
+  Widget _buildCard() {
+    final isLoading = context.watch<AuthProvider>().isLoading;
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
+      decoration: AppTheme.cardDecoration,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // ── Logo en haut de la carte ───────────────────────────────
+          Center(child: _buildLogo()),
+          const SizedBox(height: 24),
+          if (!_codeSent) ...[
+            // ── Tabs Téléphone / Email ─────────────────────────────
+            _buildTabs(),
+            const SizedBox(height: 20),
+            // ── Champ de saisie ────────────────────────────────────
+            _buildInputField(),
+          ] else ...[
+            // ── Étape vérification OTP ─────────────────────────────
+            _buildOtpStep(),
+          ],
+          const SizedBox(height: 24),
+          // ── Bouton principal ───────────────────────────────────────
+          _buildPrimaryButton(isLoading),
+          const SizedBox(height: 16),
+          // ── Lien inscription ───────────────────────────────────────
+          _buildRegisterLink(),
+        ],
+      ),
+    );
+  }
+
+  // ─── Tabs Téléphone / Email (design maquette) ────────────────────────────
+
+  Widget _buildTabs() {
+    return Container(
+      height: 52,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceGrey,
+        borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+      ),
+      child: Row(
+        children: [
+          _buildTab(
+            index: 0,
+            icon: Icons.phone_iphone_rounded,
+            label: 'Téléphone',
+          ),
+          _buildTab(
+            index: 1,
+            icon: Icons.mail_outline_rounded,
+            label: 'Email',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTab({
+    required int index,
+    required IconData icon,
+    required String label,
+  }) {
+    final isSelected = _selectedTab == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _selectedTab = index),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOut,
+          height: double.infinity,
           decoration: BoxDecoration(
-            color: const Color(0xFF176848),
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF176848).withValues(alpha: 0.3),
-                blurRadius: 15,
-                offset: const Offset(0, 8),
-              )
+            color: isSelected ? AppTheme.primary : Colors.transparent,
+            borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+            boxShadow: isSelected ? AppTheme.tabShadow : null,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 18,
+                color: isSelected ? Colors.white : AppTheme.textMuted,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: isSelected ? Colors.white : AppTheme.textMuted,
+                ),
+              ),
             ],
           ),
-          child: const Icon(Icons.account_balance_rounded, color: Colors.white, size: 32),
         ),
-        const SizedBox(height: 12),
-        const Text(
-          "Sunu Dëkk",
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Color(0xFF0F172A), letterSpacing: -0.5),
+      ),
+    );
+  }
+
+  // ─── Champ de saisie pill ────────────────────────────────────────────────
+
+  Widget _buildInputField() {
+    if (_selectedTab == 0) {
+      return TextField(
+        controller: _phoneController,
+        keyboardType: TextInputType.phone,
+        style: const TextStyle(
+          fontSize: 15, color: AppTheme.textDark, fontWeight: FontWeight.w500,
         ),
+        decoration: InputDecoration(
+          hintText: '06 00 00 00 00',
+          prefixIcon: const Padding(
+            padding: EdgeInsets.only(left: 16, right: 8),
+            child: Icon(Icons.phone_iphone_rounded, size: 20),
+          ),
+          prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+        ),
+      );
+    } else {
+      return TextField(
+        controller: _emailController,
+        keyboardType: TextInputType.emailAddress,
+        style: const TextStyle(
+          fontSize: 15, color: AppTheme.textDark, fontWeight: FontWeight.w500,
+        ),
+        decoration: InputDecoration(
+          hintText: 'exemple@mail.com',
+          prefixIcon: const Padding(
+            padding: EdgeInsets.only(left: 16, right: 8),
+            child: Icon(Icons.mail_outline_rounded, size: 20),
+          ),
+          prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+        ),
+      );
+    }
+  }
+
+  // ─── Étape OTP ───────────────────────────────────────────────────────────
+
+  Widget _buildOtpStep() {
+    return Column(
+      children: [
         const Text(
-          "L'administration simplifiée",
-          style: TextStyle(fontSize: 12, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
+          'Code de vérification',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 18, fontWeight: FontWeight.w800,
+            color: AppTheme.textDark,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          'Code reçu par ${_selectedTab == 0 ? "SMS" : "Email"}',
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 13, color: AppTheme.textMuted),
+        ),
+        const SizedBox(height: 20),
+        TextField(
+          controller: _codeController,
+          keyboardType: TextInputType.number,
+          textAlign: TextAlign.center,
+          maxLength: 6,
+          style: const TextStyle(
+            fontSize: 24, letterSpacing: 10,
+            fontWeight: FontWeight.w900, color: AppTheme.primary,
+          ),
+          decoration: const InputDecoration(
+            hintText: '• • • • • •',
+            counterText: '',
+            hintStyle: TextStyle(letterSpacing: 8, color: AppTheme.textLight),
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextButton.icon(
+          onPressed: () => setState(() => _codeSent = false),
+          icon: const Icon(Icons.arrow_back_rounded, size: 16),
+          label: const Text('Changer de méthode'),
         ),
       ],
     );
   }
 
-  Widget _buildLoginForm() {
-    final isLoading = context.watch<AuthProvider>().isLoading;
+  // ─── Bouton principal ─────────────────────────────────────────────────────
 
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF0F172A).withValues(alpha: 0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          )
-        ],
+  Widget _buildPrimaryButton(bool isLoading) {
+    return ElevatedButton(
+      onPressed: isLoading ? null : (_codeSent ? _verifyCode : _sendCode),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppTheme.primary,
+        minimumSize: const Size(double.infinity, 54),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (!_codeSent) ...[
-            Container(
-              height: 40,
-              padding: const EdgeInsets.all(3),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(10),
+      child: isLoading
+          ? const SizedBox(
+              width: 22,
+              height: 22,
+              child: CircularProgressIndicator(
+                color: Colors.white, strokeWidth: 2.5,
               ),
-              child: TabBar(
-                controller: _tabController,
-                indicator: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))
-                  ],
-                ),
-                labelColor: const Color(0xFF176848),
-                unselectedLabelColor: const Color(0xFF64748B),
-                labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
-                tabs: const [  Tab(text: "Téléphone"), Tab(text: "Email")],
-                dividerColor: Colors.transparent,
+            )
+          : Text(
+              _codeSent ? 'Vérifier le code' : 'Se connecter',
+              style: const TextStyle(
+                fontSize: 16, fontWeight: FontWeight.w700,
+                color: Colors.white,
               ),
             ),
-            const SizedBox(height: 24),
-            SizedBox(
-              height: 60,
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  TextField(
-                    controller: _phoneController,
-                    keyboardType: TextInputType.phone,
-                    style: const TextStyle(fontSize: 14),
-                    decoration: const InputDecoration(
-                      hintText: "06 00 00 00 00",
-                      prefixIcon: Icon(Icons.phone_iphone_rounded, size: 20),
-                    ),
-                  ),
-                  TextField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    style: const TextStyle(fontSize: 14),
-                    decoration: const InputDecoration(
-                      hintText: "exemple@mail.com",
-                      prefixIcon: Icon(Icons.alternate_email_rounded, size: 20),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ] else ...[
-            const Text(
-              "Code de vérification",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              "Saisissez le code reçu par ${_tabController.index == 0 ? 'SMS' : 'Email'}",
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
-            ),
-            const SizedBox(height: 24),
-            TextField(
-              controller: _codeController,
-              keyboardType: TextInputType.number,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 20, letterSpacing: 6, fontWeight: FontWeight.w900),
-              decoration: const InputDecoration(hintText: "000000"),
-            ),
-            TextButton(
-              onPressed: () => setState(() => _codeSent = false),
-              child: const Text("Changer de méthode", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
-            ),
-          ],
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: isLoading ? null : (_codeSent ? _verifyCode : _sendCode),
-            child: isLoading 
-              ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-              : Text(_codeSent ? "Vérifier" : "Se connecter"),
+    );
+  }
+
+  // ─── Lien Créer un compte ─────────────────────────────────────────────────
+
+  Widget _buildRegisterLink() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          'Nouveau ici ? ',
+          style: TextStyle(
+            fontSize: 14, color: AppTheme.textMuted,
+            fontWeight: FontWeight.w500,
           ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text("Nouveau ici ?", style: TextStyle(color: Color(0xFF64748B), fontSize: 13)),
-              TextButton(
-                onPressed: () => Navigator.of(context).pushNamed('/register'),
-                child: const Text("Créer un compte", style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13)),
-              ),
-            ],
+        ),
+        GestureDetector(
+          onTap: () => Navigator.of(context).pushNamed('/register'),
+          child: const Text(
+            'Créer un compte',
+            style: TextStyle(
+              fontSize: 14, fontWeight: FontWeight.w800,
+              color: AppTheme.primary,
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -131,13 +131,15 @@ class _CategorySelectionViewState extends State<CategorySelectionView> {
 
   Widget _buildEmptyState(AppLocalizations l10n) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.category_rounded, size: 64, color: Colors.grey.shade300),
-          const SizedBox(height: 16),
-          Text(l10n.chooseCategory, style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF64748B))),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.category_rounded, size: 64, color: Colors.grey.shade300),
+            const SizedBox(height: 16),
+            Text(l10n.chooseCategory, style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF64748B))),
+          ],
+        ),
       ),
     );
   }

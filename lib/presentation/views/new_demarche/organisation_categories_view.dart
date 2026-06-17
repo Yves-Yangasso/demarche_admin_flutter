@@ -345,35 +345,37 @@ class _OrganisationCategoriesViewState
 
   Widget _buildEmpty(AppLocalizations l10n) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(40),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: _orgColor.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(40),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: _orgColor.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.category_outlined,
+                    size: 48, color: _orgColor),
               ),
-              child: Icon(Icons.category_outlined,
-                  size: 48, color: _orgColor),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Aucune catégorie disponible',
-              style: TextStyle(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 16,
-                  color: Color(0xFF0F172A)),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Cette organisation n\'a pas encore de\ncatégories configurées.',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 13, color: Color(0xFF64748B)),
-            ),
-          ],
+              const SizedBox(height: 20),
+              const Text(
+                'Aucune catégorie disponible',
+                style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 16,
+                    color: Color(0xFF0F172A)),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Cette organisation n\'a pas encore de\ncatégories configurées.',
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 13, color: Color(0xFF64748B)),
+              ),
+            ],
+          ),
         ),
       ),
     );

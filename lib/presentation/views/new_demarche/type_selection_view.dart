@@ -126,13 +126,15 @@ class _TypeSelectionViewState extends State<TypeSelectionView> {
 
   Widget _buildEmptyState(AppLocalizations l10n) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.assignment_rounded, size: 64, color: Colors.grey.shade300),
-          const SizedBox(height: 16),
-          Text(l10n.chooseDemarcheType, style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF64748B))),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.assignment_rounded, size: 64, color: Colors.grey.shade300),
+            const SizedBox(height: 16),
+            Text(l10n.chooseDemarcheType, style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF64748B))),
+          ],
+        ),
       ),
     );
   }

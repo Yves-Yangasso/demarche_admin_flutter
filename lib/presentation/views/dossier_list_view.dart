@@ -95,31 +95,32 @@ class _DossierListViewState extends State<DossierListView> {
 
   Widget _buildEmptyState(AppLocalizations l10n) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-             //a enlevé et mettre au niveau de la list de demande
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            //a enlevé et mettre au niveau de la list de demande
         
-          Container(
-
-            padding: const EdgeInsets.all(32),
-            decoration: const BoxDecoration(
-              color: Color(0xFFEFF6FF),
-              shape: BoxShape.circle,
+            Container(
+              padding: const EdgeInsets.all(32),
+              decoration: const BoxDecoration(
+                color: Color(0xFFEFF6FF),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.folder_open_rounded, size: 64, color: const Color(0xFF176848).withValues(alpha: 0.5)),
             ),
-            child: Icon(Icons.folder_open_rounded, size: 64, color: const Color(0xFF176848).withValues(alpha: 0.5)),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            l10n.noDossier,
-            style: const TextStyle(color: Color(0xFF0F172A), fontSize: 18, fontWeight: FontWeight.w800),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            l10n.startFirst,
-            style: const TextStyle(color: Color(0xFF64748B), fontSize: 14, fontWeight: FontWeight.w500),
-          ),
-        ],
+            const SizedBox(height: 24),
+            Text(
+              l10n.noDossier,
+              style: const TextStyle(color: Color(0xFF0F172A), fontSize: 18, fontWeight: FontWeight.w800),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.startFirst,
+              style: const TextStyle(color: Color(0xFF64748B), fontSize: 14, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
       ),
     );
   }
