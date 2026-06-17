@@ -35,14 +35,17 @@ class _RegisterViewState extends State<RegisterView> {
       );
 
       if (success && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Inscription réussie, connectez-vous.")));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Inscription réussie, connectez-vous.")));
         Navigator.of(context).pushReplacementNamed('/login');
       } else if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Erreur lors de l'inscription")));
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Erreur lors de l'inscription")));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Erreur: $e")));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Erreur: $e")));
       }
     }
   }
@@ -62,17 +65,15 @@ class _RegisterViewState extends State<RegisterView> {
           child: Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24.0),
-              child: Column(
-                children: [
-                  _buildHeader(),
-                  const SizedBox(height: 32),
+              child: 
+                 
                   _buildRegisterForm(),
-                ],
+                
               ),
             ),
           ),
         ),
-      ),
+      
     );
   }
 
@@ -81,13 +82,21 @@ class _RegisterViewState extends State<RegisterView> {
       children: [
         Text(
           "Créer un compte",
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Color(0xFF0F172A), letterSpacing: -1),
+          style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w900,
+              color: Color(0xFF0F172A),
+              letterSpacing: -1),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: 5),
         Text(
           "Rejoignez-nous en quelques secondes",
-          style: TextStyle(fontSize: 15, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
+          style: TextStyle(
+              fontSize: 15,
+              color: Color(0xFF64748B),
+              fontWeight: FontWeight.w500),
         ),
+         SizedBox(height: 15),
       ],
     );
   }
@@ -111,6 +120,10 @@ class _RegisterViewState extends State<RegisterView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Image.asset(
+            "assets/images/logo.png",
+          ),
+          _buildHeader(),
           TextField(
             controller: _nomController,
             decoration: const InputDecoration(
@@ -147,18 +160,24 @@ class _RegisterViewState extends State<RegisterView> {
           const SizedBox(height: 32),
           ElevatedButton(
             onPressed: isLoading ? null : _register,
-            child: isLoading 
-              ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3))
-              : const Text("S'inscrire"),
+            child: isLoading
+                ? const SizedBox(
+                    height: 24,
+                    width: 24,
+                    child: CircularProgressIndicator(
+                        color: Colors.white, strokeWidth: 3))
+                : const Text("S'inscrire"),
           ),
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("Déjà inscrit ?", style: TextStyle(color: Color(0xFF64748B))),
+              const Text("Déjà inscrit ?",
+                  style: TextStyle(color: Color(0xFF64748B))),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text("Se connecter", style: TextStyle(fontWeight: FontWeight.w800)),
+                child: const Text("Se connecter",
+                    style: TextStyle(fontWeight: FontWeight.w800)),
               ),
             ],
           ),
