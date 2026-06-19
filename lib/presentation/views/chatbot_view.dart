@@ -14,9 +14,11 @@ class _ChatBotViewState extends State<ChatBotView> {
 
   void _handleSend() async {
     final text = _controller.text.trim();
+
     if (text.isEmpty) return;
 
     _controller.clear();
+
     await context.read<IAProvider>().sendMessage(text);
   }
 
@@ -28,9 +30,16 @@ class _ChatBotViewState extends State<ChatBotView> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text('Assistant SunuDekk', style: TextStyle(color: Color(0xFF0F172A), fontSize: 16, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.white,
+        title: const Text(
+          "Assistant SunuDekk",
+          style: TextStyle(
+            color: Color(0xFF0F172A),
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF0F172A)),
           onPressed: () => Navigator.pop(context),
@@ -38,108 +47,162 @@ class _ChatBotViewState extends State<ChatBotView> {
         actions: [
           IconButton(
             onPressed: () => iaProvider.clearChat(),
-            icon: const Icon(Icons.delete_sweep_rounded, color: Color(0xFF64748B)),
-          ),
-        ],
-      ),
-      body:SingleChildScrollView( child: Column(
-        children: [
-          Container(
-            child: messages.isEmpty 
-              ? _buildWelcome()
-              : ListView.builder(
-                padding: const EdgeInsets.all(20),
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  final msg = messages[index];
-                  return _ChatBubble(
-                    text: msg['content'], 
-                    isUser: msg['role'] == 'user',
-                  );
-                },
-              ),
-          ),
-          if (iaProvider.isLoading) 
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+            icon: const Icon(
+              Icons.delete_sweep_rounded,
+              color: Color(0xFF64748B),
             ),
-          _buildInput(),
+          )
         ],
       ),
-    )
-    );
-  }
-
-  Widget _buildWelcome() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(40.0),
+      body: SafeArea(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: const Color(0xFF176848).withValues(alpha: 0.1),
-                shape: BoxShape.circle,
+            Expanded(
+              child: messages.isEmpty
+                  ? _buildWelcome()
+                  : ListView.builder(
+                      reverse: true,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 20,
+                      ),
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        final msg =
+                            messages[messages.length - 1 - index];
+
+                        return _ChatBubble(
+                          text: msg['content'],
+                          isUser: msg['role'] == 'user',
+                        );
+                      },
+                    ),
+            ),
+
+            if (iaProvider.isLoading)
+              const Padding(
+                padding: EdgeInsets.only(bottom: 8),
+                child: SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                  ),
+                ),
               ),
-              child: const Icon(Icons.smart_toy_rounded, color: Color(0xFF176848), size: 48),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              "Bonjour !",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
-            ),
-            const SizedBox(height: 12),
-            const Text(
-              "Je suis votre assistant numérique. Comment puis-je vous aider dans vos démarches administratives aujourd'hui ?",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Color(0xFF64748B), height: 1.5),
-            ),
+
+            _buildInput(),
           ],
         ),
       ),
     );
   }
 
+  Widget _buildWelcome() {
+    return Center(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(30),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF176848).withOpacity(.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.smart_toy_rounded,
+                  color: Color(0xFF176848),
+                  size: 50,
+                ),
+              ),
+              const SizedBox(height: 25),
+              const Text(
+                "Bonjour !",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF0F172A),
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                "Je suis votre assistant numérique. Comment puis-je vous aider dans vos démarches administratives aujourd'hui ?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  height: 1.5,
+                  color: Color(0xFF64748B),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildInput() {
+    final size = MediaQuery.of(context).size;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return Container(
-      padding: EdgeInsets.only(left: 16, right: 16, bottom: MediaQuery.of(context).padding.bottom + 16, top: 16),
+      padding: EdgeInsets.fromLTRB(
+        12,
+        12,
+        12,
+        bottomPadding + 12,
+      ),
       decoration: const BoxDecoration(
         color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFE2E8F0))),
+        border: Border(
+          top: BorderSide(
+            color: Color(0xFFE2E8F0),
+          ),
+        ),
       ),
       child: Row(
         children: [
           Expanded(
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
                 color: const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(30),
               ),
               child: TextField(
                 controller: _controller,
-                style: const TextStyle(fontSize: 14),
+                minLines: 1,
+                maxLines: 5,
                 decoration: const InputDecoration(
-                  hintText: 'Saisissez votre demande...',
-                  hintStyle: TextStyle(color: Color(0xFF94A3B8)),
+                  hintText: "Saisissez votre demande...",
                   border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 14,
+                  ),
                 ),
                 onSubmitted: (_) => _handleSend(),
               ),
             ),
           ),
-          const SizedBox(width: 8),
-          Material(
-            color: const Color(0xFF176848),
-            borderRadius: BorderRadius.circular(24),
-            child: IconButton(
-              icon: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
-              onPressed: _handleSend,
+          const SizedBox(width: 10),
+          SizedBox(
+            width: size.width * .13,
+            height: size.width * .13,
+            child: Material(
+              color: const Color(0xFF176848),
+              shape: const CircleBorder(),
+              child: IconButton(
+                icon: const Icon(
+                  Icons.send_rounded,
+                  color: Colors.white,
+                ),
+                onPressed: _handleSend,
+              ),
             ),
-          ),
+          )
         ],
       ),
     );
@@ -150,54 +213,80 @@ class _ChatBubble extends StatelessWidget {
   final String text;
   final bool isUser;
 
-  const _ChatBubble({required this.text, required this.isUser});
+  const _ChatBubble({
+    required this.text,
+    required this.isUser,
+  });
 
   @override
   Widget build(BuildContext context) {
-     return SingleChildScrollView (
+    final width = MediaQuery.of(context).size.width;
 
-   child:  Padding(
+    return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
-        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment:
+            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isUser) ...[
             Container(
-              width: 28,
-              height: 28,
+              width: 32,
+              height: 32,
               decoration: BoxDecoration(
                 color: const Color(0xFF176848),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.smart_toy_outlined, color: Colors.white, size: 10),
+              child: const Icon(
+                Icons.smart_toy_outlined,
+                color: Colors.white,
+                size: 18,
+              ),
             ),
             const SizedBox(width: 8),
           ],
-          Flexible(
+
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: width * .75,
+            ),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 12,
+              ),
               decoration: BoxDecoration(
-                color: isUser ? const Color(0xFF0F172A) : Colors.white,
-                borderRadius: BorderRadius.circular(12).copyWith(
-                  bottomRight: isUser ? const Radius.circular(0) : const Radius.circular(12),
-                  bottomLeft: !isUser ? const Radius.circular(0) : const Radius.circular(12),
+                color: isUser
+                    ? const Color(0xFF0F172A)
+                    : Colors.white,
+                borderRadius: BorderRadius.circular(18).copyWith(
+                  bottomLeft: !isUser
+                      ? Radius.zero
+                      : const Radius.circular(18),
+                  bottomRight: isUser
+                      ? Radius.zero
+                      : const Radius.circular(18),
                 ),
-                border: !isUser ? Border.all(color: const Color(0xFFE2E8F0)) : null,
+                border: !isUser
+                    ? Border.all(
+                        color: const Color(0xFFE2E8F0),
+                      )
+                    : null,
               ),
               child: Text(
                 text,
                 style: TextStyle(
-                  color: isUser ? Colors.white : const Color(0xFF1E293B),
-                  fontSize: 13,
-                  height: 1.4,
+                  color: isUser
+                      ? Colors.white
+                      : const Color(0xFF1E293B),
+                  fontSize: width < 360 ? 12 : 14,
+                  height: 1.5,
                 ),
               ),
             ),
           ),
         ],
       ),
-    )
-     );
+    );
   }
 }

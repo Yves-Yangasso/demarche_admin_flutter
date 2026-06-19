@@ -78,7 +78,7 @@ class OnboardingView extends StatelessWidget {
              const SizedBox(height: 10),
               SizedBox(
                 width: double.infinity,
-                height: 30,
+                height: 40,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context)
