@@ -204,35 +204,4 @@ class SuiviDossierScreen extends StatelessWidget {
     );
   }
 
-  /*Widget _buildBottomButton(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, -2))],
-      ),
-      child: SafeArea(
-        top: false,
-        child: ElevatedButton(
-          onPressed: () {
-            if (dossier.originalDossier != null) {
-              Navigator.pushNamed(
-                context,
-                '/dossier_detail',
-                arguments: dossier.originalDossier,
-              );
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF176848),
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-          child: const Text("Voir les détails",
-              style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600)),
-        ),
-      ),
-    );
-  }*/
 }

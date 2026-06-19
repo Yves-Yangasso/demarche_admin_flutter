@@ -42,9 +42,9 @@ class _ChatBotViewState extends State<ChatBotView> {
           ),
         ],
       ),
-      body: Column(
+      body:SingleChildScrollView( child: Column(
         children: [
-          Expanded(
+          Container(
             child: messages.isEmpty 
               ? _buildWelcome()
               : ListView.builder(
@@ -67,6 +67,7 @@ class _ChatBotViewState extends State<ChatBotView> {
           _buildInput(),
         ],
       ),
+    )
     );
   }
 
@@ -153,7 +154,9 @@ class _ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+     return SingleChildScrollView (
+
+   child:  Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -167,7 +170,7 @@ class _ChatBubble extends StatelessWidget {
                 color: const Color(0xFF176848),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.smart_toy_outlined, color: Colors.white, size: 16),
+              child: const Icon(Icons.smart_toy_outlined, color: Colors.white, size: 10),
             ),
             const SizedBox(width: 8),
           ],
@@ -194,6 +197,7 @@ class _ChatBubble extends StatelessWidget {
           ),
         ],
       ),
-    );
+    )
+     );
   }
 }

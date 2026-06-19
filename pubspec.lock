@@ -850,6 +850,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.3"
+  validate_phone_number:
+    dependency: "direct main"
+    description:
+      name: validate_phone_number
+      sha256: b3e356eb1255acdd86a850afb051dfcba9bcf70c5da0ad69455fe86a18d96647
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
   vector_graphics:
     dependency: transitive
     description:

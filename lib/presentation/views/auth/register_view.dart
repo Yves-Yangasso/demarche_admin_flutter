@@ -122,6 +122,8 @@ class _RegisterViewState extends State<RegisterView> {
         children: [
           Image.asset(
             "assets/images/logo.png",
+             width: MediaQuery.of(context).size.height*0.4,
+                height: MediaQuery.of(context).size.height*0.4,   
           ),
           _buildHeader(),
           TextField(
