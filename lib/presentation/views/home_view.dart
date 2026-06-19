@@ -61,22 +61,8 @@ class HomeView extends StatelessWidget {
                         fontWeight: FontWeight.w800,
                         color: Color(0xFF0F172A)),
                   ),
-                  const SizedBox(height: 15),
-                  _buildRecentActivity(
-                    l10n,
-                    "Votre pièce d'identité a été approuvée.",
-                    Icons.verified_rounded,
-                    "Hier",
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              SuiviDossierScreen(dossier: exampleDossier),
-                        ),
-                      );
-                    },
-                  ),
+                 
+                 
                   const SizedBox(height: 5),
                   _buildRecentActivity(
                     l10n,
@@ -96,8 +82,8 @@ class HomeView extends StatelessWidget {
                   const SizedBox(height: 5),
                   _buildRecentActivity(
                     l10n,
-                    "Votre pièce d'identité a été approuvée.",
-                    Icons.verified_rounded,
+                    "Votre extrait de naissance est encours de verification.",
+                    Icons.autorenew,
                     "Hier",
                     onTap: () {
                       Navigator.push(
@@ -482,7 +468,7 @@ class HomeView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    l10n.docValidated,
+                    "En cours de validité",
                     style: const TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 13,

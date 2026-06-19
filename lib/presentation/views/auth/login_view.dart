@@ -131,9 +131,10 @@ class _LoginViewState extends State<LoginView>
       children: [
         Image.asset(
           "assets/images/logo.png",
-          height: 200,
+            width: MediaQuery.of(context).size.height*0.4,
+            height: MediaQuery.of(context).size.height*0.4,   
         ),
-        const SizedBox(height: 15),
+         SizedBox(height: MediaQuery.of(context).size.height*0.01),
       ],
     );
   }
@@ -142,7 +143,7 @@ class _LoginViewState extends State<LoginView>
     final isLoading = context.watch<AuthProvider>().isLoading;
 
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
@@ -164,7 +165,7 @@ class _LoginViewState extends State<LoginView>
           style: TextStyle(fontSize: 14, color: Color(0xFF176848), fontWeight: FontWeight.w500),
           ),
          ),
-            const SizedBox(height: 40),
+           SizedBox(height: MediaQuery.of(context).size.height*0.05),
           if (!_codeSent) ...[
             Container(
               height: 55,
@@ -222,7 +223,7 @@ class _LoginViewState extends State<LoginView>
                     keyboardType: TextInputType.phone,
                     style: const TextStyle(fontSize: 14),
                     decoration: const InputDecoration(
-                      hintText: "781208599",
+                      hintText: "778616109",
                       prefixIcon: Icon(Icons.phone_iphone_rounded, size: 20),
                     ),
                   ),

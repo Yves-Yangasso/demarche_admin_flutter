@@ -126,6 +126,74 @@ class _RegisterViewState extends State<RegisterView> {
           ),
         ],
       ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Image.asset(
+            "assets/images/logo.png",
+             width: MediaQuery.of(context).size.height*0.2,
+                height: MediaQuery.of(context).size.height*0.2,   
+          ),
+          _buildHeader(),
+          TextField(
+            controller: _nomController,
+            decoration: const InputDecoration(
+              labelText: "Nom",
+              prefixIcon: Icon(Icons.person_rounded),
+            ),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _prenomController,
+            decoration: const InputDecoration(
+              labelText: "Prénom",
+              prefixIcon: Icon(Icons.person_outline_rounded),
+            ),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _phoneController,
+            keyboardType: TextInputType.phone,
+            decoration: const InputDecoration(
+              labelText: "Téléphone",
+              prefixIcon: Icon(Icons.phone_iphone_rounded),
+            ),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(
+              labelText: "Email",
+              prefixIcon: Icon(Icons.alternate_email_rounded),
+            ),
+          ),
+          const SizedBox(height: 32),
+          ElevatedButton(
+            onPressed: isLoading ? null : _register,
+            child: isLoading
+                ? const SizedBox(
+                    height: 24,
+                    width: 24,
+                    child: CircularProgressIndicator(
+                        color: Colors.white, strokeWidth: 3))
+                : const Text("S'inscrire"),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("Déjà inscrit ?",
+                  style: TextStyle(color: Color(0xFF64748B))),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text("Se connecter",
+                    style: TextStyle(fontWeight: FontWeight.w800)),
+              ),
+            ],
+          ),
+        ],
+      ),
       child: Form(
         key: _formKey,
         child: Column(

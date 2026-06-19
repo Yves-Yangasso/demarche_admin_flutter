@@ -123,7 +123,7 @@ const Map<String, String> appEn = {
   // Notifications
   'no_notifications': 'No notifications',
   'mark_all_read': 'Mark all as read',
-  'doc_validated': 'Document validated',
+  'doc_validated': 'En cours',
   'doc_rejected': 'Document rejected',
   'new_message': 'New message',
 
