@@ -109,6 +109,7 @@ class AuthProvider with ChangeNotifier {
     required String prenom,
     required String telephone,
     required String email,
+    bool consentementDonnees = false,
   }) async {
     _isLoading = true;
     _error = null;
@@ -119,6 +120,7 @@ class AuthProvider with ChangeNotifier {
         prenom: prenom,
         telephone: telephone,
         email: email,
+        consentementDonnees: consentementDonnees,
       );
       return response.statusCode == 201;
     } catch (e) {

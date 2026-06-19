@@ -11,6 +11,7 @@ abstract class IAuthRepository {
     required String prenom,
     required String telephone,
     required String email,
+    bool consentementDonnees = false,
   });
   Future<Utilisateur?> getCurrentUser();
   Future<String?> getToken();

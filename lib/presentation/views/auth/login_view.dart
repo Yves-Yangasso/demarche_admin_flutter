@@ -2,6 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 
+final _phoneRe = RegExp(r'^(?:\+221|00221)?[7][0678]\d{7}$');
+
+String? _validatePhoneSenegal(String value) {
+  final normalised = value.replaceAll(RegExp(r'[\s\-\.]'), '');
+  if (normalised.isEmpty) return 'Entrez votre numéro de téléphone.';
+  if (!_phoneRe.hasMatch(normalised)) {
+    return 'Numéro invalide (ex: 77 123 45 67 ou +221 77 123 45 67)';
+  }
+  return null;
+}
+
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
@@ -34,25 +45,39 @@ class _LoginViewState extends State<LoginView>
   }
 
   Future<void> _sendCode() async {
+    if (_tabController.index == 0) {
+      final error = _validatePhoneSenegal(_phoneController.text);
+      if (error != null) {
+        _showError(error);
+        return;
+      }
+    } else if (_emailController.text.trim().isEmpty) {
+      _showError('Entrez votre adresse email.');
+      return;
+    }
+
     final authProvider = context.read<AuthProvider>();
     try {
       if (_tabController.index == 0) {
-        await authProvider.sendPhoneOtp(_phoneController.text);
+        await authProvider.sendPhoneOtp(_phoneController.text.replaceAll(RegExp(r'[\s\-\.]'), ''));
       } else {
-        await authProvider.sendEmailOtp(_emailController.text);
+        await authProvider.sendEmailOtp(_emailController.text.trim());
       }
       setState(() => _codeSent = true);
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.redAccent,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
+      if (mounted) _showError(e.toString());
     }
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.redAccent,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   Future<void> _verifyCode() async {
@@ -68,15 +93,7 @@ class _LoginViewState extends State<LoginView>
         Navigator.of(context).pushReplacementNamed('/home');
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.redAccent,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
+      if (mounted) _showError(e.toString());
     }
   }
 
@@ -205,7 +222,7 @@ class _LoginViewState extends State<LoginView>
                     keyboardType: TextInputType.phone,
                     style: const TextStyle(fontSize: 14),
                     decoration: const InputDecoration(
-                      hintText: "06 00 00 00 00",
+                      hintText: "781208599",
                       prefixIcon: Icon(Icons.phone_iphone_rounded, size: 20),
                     ),
                   ),

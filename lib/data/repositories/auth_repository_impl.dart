@@ -84,13 +84,15 @@ class AuthRepositoryImpl implements IAuthRepository {
     required String prenom,
     required String telephone,
     required String email,
+    bool consentementDonnees = false,
   }) async {
     try {
       final response = await _apiClient.post("/auth/inscription", {
         "nom": nom,
         "prenom": prenom,
-        "telephone": telephone,
-        "email": email,
+        if (telephone.isNotEmpty) "telephone": telephone,
+        if (email.isNotEmpty) "email": email,
+        "consentement_donnees": consentementDonnees,
       });
       if (response.statusCode == 409) {
         throw Failure("Un compte avec ce numéro ou cet email existe déjà.");
