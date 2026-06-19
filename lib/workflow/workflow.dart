@@ -45,7 +45,7 @@ class SuiviDossierScreen extends StatelessWidget {
               ),
             ),
           ),
-          _buildBottomButton(context),
+        //  _buildBottomButton(context),
         ],
       ),
     );
@@ -57,7 +57,7 @@ class SuiviDossierScreen extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF1B5E20), Color(0xFF2E7D32)],
+          colors: [Color(0xFF176848), Color(0xFF176848)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -122,7 +122,7 @@ class SuiviDossierScreen extends StatelessWidget {
 
     switch (step.status) {
       case StepStatus.done:
-        circleColor = const Color(0xFF2E7D32);
+        circleColor = const Color(0xFF176848);
         icon = const Icon(Icons.check, color: Colors.white, size: 14);
         break;
       case StepStatus.active:
@@ -162,7 +162,7 @@ class SuiviDossierScreen extends StatelessWidget {
                 Expanded(
                   child: Container(
                     width: 2,
-                    color: step.status == StepStatus.done ? const Color(0xFF2E7D32) : Colors.grey[300],
+                    color: step.status == StepStatus.done ? const Color(0xFF176848) : Colors.grey[300],
                   ),
                 ),
             ],
@@ -204,7 +204,7 @@ class SuiviDossierScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomButton(BuildContext context) {
+  /*Widget _buildBottomButton(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -225,7 +225,7 @@ class SuiviDossierScreen extends StatelessWidget {
             }
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF2E7D32),
+            backgroundColor: const Color(0xFF176848),
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
@@ -234,5 +234,5 @@ class SuiviDossierScreen extends StatelessWidget {
         ),
       ),
     );
-  }
+  }*/
 }

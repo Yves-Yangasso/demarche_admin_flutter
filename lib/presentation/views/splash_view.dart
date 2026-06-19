@@ -62,7 +62,7 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(1),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(32),
@@ -76,8 +76,8 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
                 ),
                 child: Image.asset(
                   'assets/images/logo.png',
-                  width: 64,
-                  height: 64,
+                  width: 90,
+                  height: 90,
                 ),
               ),
               const SizedBox(height: 24),

@@ -17,9 +17,10 @@ class OnboardingView extends StatelessWidget {
               
 
               Container(
+                
                 padding: const EdgeInsets.all(1),
                 decoration: BoxDecoration(
-                 
+                
                   color: primaryColor.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),

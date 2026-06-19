@@ -81,6 +81,7 @@ class AppLocalizations {
   String get stepInfo => get('step_info');
   String get stepDocs => get('step_docs');
   String get stepRecap => get('step_recap');
+   String get stepInfoIdentity => get('step_identity');
 
   String get lastName => get('last_name');
   String get firstName => get('first_name');

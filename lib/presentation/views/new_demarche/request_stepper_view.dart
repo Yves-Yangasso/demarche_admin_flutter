@@ -43,7 +43,7 @@ class _RequestStepperViewState extends State<RequestStepperView> {
 
   // Step 3 — Recap & terms
   bool _acceptedTerms = false;
-
+   bool _step3 = false;
   // Route args
   Map<String, dynamic>? _args;
   bool _argsPrefilled = false;
@@ -104,6 +104,18 @@ class _RequestStepperViewState extends State<RequestStepperView> {
     return true;
   }
 
+  bool _canNextStepFour() {
+    if (_currentStep == 3) return _infoFormKey.currentState?.validate() ?? false;
+    if (_currentStep == 2) {
+      return _requiredDocs.isEmpty ||
+          _requiredDocs.every((d) {
+            final key = d['id'].toString();
+            return !d['obligatoire'] || _uploadedFiles[key] != null;
+          });
+    }
+    if (_currentStep == 2) return _acceptedTerms;
+    return true;
+  }
   Future<void> _submitAndPay() async {
     if (!_acceptedTerms) return;
 
@@ -172,7 +184,8 @@ class _RequestStepperViewState extends State<RequestStepperView> {
               children: [
                 _buildStep1Info(l10n),
                 _buildStep2Docs(l10n),
-                _buildStep3Recap(l10n),
+                _buildStep3Info(l10n),
+                _buildStep4Recap(l10n),
               ],
             ),
           ),
@@ -184,7 +197,7 @@ class _RequestStepperViewState extends State<RequestStepperView> {
   }
 
   Widget _buildStepIndicator(AppLocalizations l10n) {
-    final steps = [l10n.stepInfo, l10n.stepDocs, l10n.stepRecap];
+    final steps = [l10n.stepInfo, l10n.stepDocs,   l10n.stepInfoIdentity, l10n.stepRecap,];
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Row(
@@ -266,7 +279,7 @@ class _RequestStepperViewState extends State<RequestStepperView> {
     );
   }
 
-  // ─── Step 1: Information ───────────────────────────────────────────────────
+  // Step 1: Information
   Widget _buildStep1Info(AppLocalizations l10n) {
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
@@ -275,63 +288,29 @@ class _RequestStepperViewState extends State<RequestStepperView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _sectionTitle('Informations personnelles', Icons.person_rounded),
             const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(child: _field(l10n.lastName, _nomCtrl, required: true, icon: Icons.person_outline_rounded)),
-                const SizedBox(width: 12),
-                Expanded(child: _field(l10n.firstName, _prenomCtrl, required: true, icon: Icons.person_outline_rounded)),
-              ],
-            ),
+            _sectionTitle('Informations personnelles', Icons.person_rounded),
+            const SizedBox(height: 18),
+          
+            _field(l10n.firstName, _prenomCtrl, required: true, icon: Icons.person_outline_rounded),
+              const SizedBox(height: 12),
+            _field(l10n.lastName, _nomCtrl, required: true, icon: Icons.person_outline_rounded),
             const SizedBox(height: 12),
             _field(l10n.email, _emailCtrl, keyboard: TextInputType.emailAddress, icon: Icons.email_outlined),
             const SizedBox(height: 12),
             _field(l10n.phone, _telephoneCtrl, keyboard: TextInputType.phone, required: true, icon: Icons.phone_outlined),
             const SizedBox(height: 20),
-            _sectionTitle('Filiation', Icons.family_restroom_rounded),
-            const SizedBox(height: 12),
-            _field(l10n.fatherName, _nomPereCtrl, icon: Icons.male_rounded),
+             _field(l10n.fatherName, _nomPereCtrl, icon: Icons.male_rounded),
             const SizedBox(height: 12),
             _field(l10n.motherName, _nomMereCtrl, icon: Icons.female_rounded),
-            const SizedBox(height: 20),
-            _sectionTitle('Identité', Icons.badge_rounded),
-            const SizedBox(height: 12),
-            _field(l10n.birthDate, _dateNaissCtrl,
-                hint: 'JJ/MM/AAAA', keyboard: TextInputType.datetime, icon: Icons.calendar_today_rounded),
-            const SizedBox(height: 12),
-            _field(l10n.birthPlace, _lieuNaissCtrl, icon: Icons.location_city_rounded),
-            const SizedBox(height: 12),
-            _field(l10n.nationality, _nationaliteCtrl, icon: Icons.flag_rounded),
-            const SizedBox(height: 12),
-            _field(l10n.idNumber, _numeroCniCtrl, icon: Icons.badge_outlined),
-            const SizedBox(height: 12),
-            _field(l10n.address, _adresseCtrl, maxLines: 2, icon: Icons.home_outlined),
-            const SizedBox(height: 20),
-            _sectionTitle(l10n.comment, Icons.comment_rounded),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _commentaireCtrl,
-              maxLines: 3,
-              decoration: InputDecoration(
-                hintText: l10n.commentHint,
-                alignLabelWithHint: true,
-                filled: true,
-                fillColor: const Color(0xFFF8FAFC),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.all(16),
-              ),
-            ),
+           // _sectionTitle('Filiation', Icons.family_restroom_rounded),
           ],
         ),
       ),
     );
   }
 
-  // ─── Step 2: Documents ────────────────────────────────────────────────────
+  //  Step 2: Documents
   Widget _buildStep2Docs(AppLocalizations l10n) {
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
@@ -494,8 +473,55 @@ class _RequestStepperViewState extends State<RequestStepperView> {
     );
   }
 
-  // ─── Step 3: Recap ────────────────────────────────────────────────────────
-  Widget _buildStep3Recap(AppLocalizations l10n) {
+    // Step 3: Information
+  Widget _buildStep3Info(AppLocalizations l10n) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      child: Form(
+        key: _infoFormKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 12),
+            _sectionTitle('Identité de la personne', Icons.badge_rounded),
+            const SizedBox(height: 18),
+            _field(l10n.birthDate, _dateNaissCtrl,
+                hint: 'JJ/MM/AAAA', keyboard: TextInputType.datetime, icon: Icons.calendar_today_rounded),
+            const SizedBox(height: 12),
+            _field(l10n.birthPlace, _lieuNaissCtrl, icon: Icons.location_city_rounded),
+            const SizedBox(height: 12),
+            _field(l10n.nationality, _nationaliteCtrl, icon: Icons.flag_rounded),
+            const SizedBox(height: 12),
+            _field(l10n.idNumber, _numeroCniCtrl, icon: Icons.badge_outlined),
+            const SizedBox(height: 12),
+            _field(l10n.address, _adresseCtrl, maxLines: 2, icon: Icons.home_outlined),
+            const SizedBox(height: 20),
+            _sectionTitle(l10n.comment, Icons.comment_rounded),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _commentaireCtrl,
+              maxLines: 3,
+              decoration: InputDecoration(
+                hintText: l10n.commentHint,
+                alignLabelWithHint: true,
+                filled: true,
+                fillColor: const Color(0xFFF8FAFC),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.all(16),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  // Step 3: Recap
+  Widget _buildStep4Recap(AppLocalizations l10n) {
     final typeNom = _args?['type_nom'] ?? '';
     final prix = (_args?['prix'] ?? 0).toDouble();
 
@@ -711,7 +737,7 @@ class _RequestStepperViewState extends State<RequestStepperView> {
             ),
           if (_currentStep > 0) const SizedBox(width: 12),
           Expanded(
-            flex: 2,
+            flex: 1,
             child: ElevatedButton(
               onPressed: () {
                 if (_currentStep == 0) {
@@ -728,7 +754,9 @@ class _RequestStepperViewState extends State<RequestStepperView> {
                     return;
                   }
                   _goTo(2);
-                } else {
+                } else if(_currentStep==2) {
+                      _goTo(3);
+                  }else {
                   if (!_acceptedTerms) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -750,7 +778,7 @@ class _RequestStepperViewState extends State<RequestStepperView> {
                 shadowColor: const Color(0xFF176848).withValues(alpha: 0.4),
               ),
               child: Text(
-                _currentStep < 2 ? l10n.next : 'Payer & Soumettre',
+                _currentStep < 3 ? l10n.next : 'Payer & Soumettre',
                 style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: Colors.white),
               ),
             ),

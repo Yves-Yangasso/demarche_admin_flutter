@@ -59,6 +59,7 @@ const Map<String, String> appEn = {
   'step_info': 'Information',
   'step_docs': 'Documents',
   'step_recap': 'Summary',
+  'step_identity': 'Identity',
 
   // Form fields
   'last_name': 'Last Name',

@@ -45,7 +45,7 @@ const Map<String, String> appFr = {
   'my_documents': 'Mes documents',
   'scan_qr': 'Scan QR',
   'assistance': 'Assistance',
-  'recent_activity': 'Dernière activité',
+  'recent_activity': 'Liste des demandes',
   'no_dossier': 'Aucune démarche en cours',
   'start_first': 'Lancez votre première demande.',
   'start': 'Commencer',
@@ -59,6 +59,7 @@ const Map<String, String> appFr = {
   'step_info': 'Informations',
   'step_docs': 'Documents',
   'step_recap': 'Récapitulatif',
+  'step_identity': 'Identité',
 
   // Form fields
   'last_name': 'Nom',

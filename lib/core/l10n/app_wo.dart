@@ -59,6 +59,7 @@ const Map<String, String> appWo = {
   'step_info': 'Xibaar yi',
   'step_docs': 'Papiye yi',
   'step_recap': 'Benn xam-xam',
+  'step_identity': 'Jëm kanam',
 
   // Form fields
   'last_name': 'Sant',

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sunudekk_mobile/workflow/exemple.dart';
+import 'package:sunudekk_mobile/workflow/workflow.dart';
 import '../providers/auth_provider.dart';
 import '../providers/dossier_provider.dart';
 import '../providers/notification_provider.dart';
@@ -15,14 +17,18 @@ class HomeView extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final user = context.watch<AuthProvider>().currentUser;
     final dossierProvider = context.watch<DossierProvider>();
-    final latestDossier = dossierProvider.dossiers.isNotEmpty ? dossierProvider.dossiers.first : null;
+    final latestDossier = dossierProvider.dossiers.isNotEmpty
+        ? dossierProvider.dossiers.first
+        : null;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       body: RefreshIndicator(
         onRefresh: () async {
           await context.read<AuthProvider>().fetchUser();
-          await context.read<DossierProvider>().fetchDossiers(forceRefresh: true);
+          await context
+              .read<DossierProvider>()
+              .fetchDossiers(forceRefresh: true);
         },
         child: CustomScrollView(
           slivers: [
@@ -37,20 +43,73 @@ class HomeView extends StatelessWidget {
                     _buildTrackingCard(context, latestDossier, l10n)
                   else
                     _buildEmptyTrackingCard(context, l10n),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 15),
                   Text(
                     l10n.quickActions,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                    style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF0F172A)),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   _buildQuickActionsGrid(context, l10n),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 5),
                   Text(
                     l10n.recentActivity,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                    style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF0F172A)),
                   ),
-                  const SizedBox(height: 16),
-                  _buildRecentActivity(l10n),
+                  const SizedBox(height: 15),
+                  _buildRecentActivity(
+                    l10n,
+                    "Votre pièce d'identité a été approuvée.",
+                    Icons.verified_rounded,
+                    "Hier",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              SuiviDossierScreen(dossier: exampleDossier),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 5),
+                  _buildRecentActivity(
+                    l10n,
+                    "Votre pièce d'identité est encours de verification.",
+                    Icons.autorenew,
+                    "",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              SuiviDossierScreen(dossier: exampleDossier),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 5),
+                  _buildRecentActivity(
+                    l10n,
+                    "Votre pièce d'identité a été approuvée.",
+                    Icons.verified_rounded,
+                    "Hier",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => SuiviDossierScreen(
+                            dossier: exampleDossier,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ]),
               ),
             ),
@@ -67,10 +126,7 @@ class HomeView extends StatelessWidget {
       backgroundColor: const Color(0xFFF8FAFC),
       elevation: 0,
       centerTitle: false,
-      title: const Text(
-        'SunuDekk',
-        style: TextStyle(color: Color(0xFF0F172A), fontWeight: FontWeight.w900, fontSize: 22),
-      ),
+      title:  Image.asset("assets/images/logo.png", width: 100,height: 100,),
       actions: [
         Container(
           margin: const EdgeInsets.only(right: 20),
@@ -82,7 +138,8 @@ class HomeView extends StatelessWidget {
           child: Stack(
             children: [
               IconButton(
-                icon: const Icon(Icons.notifications_none_rounded, color: Color(0xFF0F172A), size: 22),
+                icon: const Icon(Icons.notifications_none_rounded,
+                    color: Color(0xFF0F172A), size: 22),
                 onPressed: () => Navigator.pushNamed(context, '/notifications'),
               ),
               if (context.watch<NotificationProvider>().unreadCount > 0)
@@ -97,7 +154,10 @@ class HomeView extends StatelessWidget {
                     ),
                     child: Text(
                       '${context.watch<NotificationProvider>().unreadCount}',
-                      style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -114,110 +174,133 @@ class HomeView extends StatelessWidget {
       children: [
         Text(
           '${l10n.hello}, $name ! ',
-          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Color(0xFF0F172A)),
+          style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w900,
+              color: Color(0xFF0F172A)),
         ),
         const SizedBox(height: 2),
         Text(
           l10n.readyForAdmin,
-          style: const TextStyle(fontSize: 14, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
+          style: const TextStyle(
+              fontSize: 14,
+              color: Color(0xFF64748B),
+              fontWeight: FontWeight.w500),
         ),
       ],
     );
   }
 
-  Widget _buildTrackingCard(BuildContext context, dynamic dossier, AppLocalizations l10n) {
+  Widget _buildTrackingCard(
+      BuildContext context, dynamic dossier, AppLocalizations l10n) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(
-          context, 
-          '/suivi_dossier', 
+          context,
+          '/suivi_dossier',
           arguments: DossierTracking.fromDossier(dossier as Dossier),
         );
       },
       child: Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF1E40AF), Color(0xFF3B82F6)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF1E40AF), Color(0xFF3B82F6)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF176848).withValues(alpha: 0.3),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
+            ),
+          ],
         ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF176848).withValues(alpha: 0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '${l10n.dossierRef} #${dossier.reference}',
-                style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 11, fontWeight: FontWeight.w600),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${l10n.dossierRef} #${dossier.reference}',
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.8),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600),
                 ),
-                child: Text(
-                  dossier.statut.toUpperCase(),
-                  style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w800),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            dossier.typeDemarche.nom,
-            style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900),
-          ),
-          const SizedBox(height: 16),
-          Stack(
-            children: [
-              Container(
-                height: 6,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              ),
-              FractionallySizedBox(
-                widthFactor: 0.4,
-                child: Container(
-                  height: 6,
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(3),
-                    boxShadow: [
-                      BoxShadow(color: Colors.white.withValues(alpha: 0.5), blurRadius: 8)
-                    ],
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    dossier.statut.toUpperCase(),
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w800),
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              const Icon(Icons.auto_awesome_rounded, size: 14, color: Colors.white),
-              const SizedBox(width: 6),
-              Text(
-                'Priorité : ${dossier.priorite ?? "Normale"}',
-                style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 12, fontWeight: FontWeight.w500),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              dossier.typeDemarche.nom,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900),
+            ),
+            const SizedBox(height: 16),
+            Stack(
+              children: [
+                Container(
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+                FractionallySizedBox(
+                  widthFactor: 0.4,
+                  child: Container(
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(3),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.white.withValues(alpha: 0.5),
+                            blurRadius: 8)
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const Icon(Icons.auto_awesome_rounded,
+                    size: 14, color: Colors.white),
+                const SizedBox(width: 6),
+                Text(
+                  'Priorité : ${dossier.priorite ?? "Normale"}',
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.9),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-    ),
     );
   }
 
@@ -231,11 +314,15 @@ class HomeView extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const Icon(Icons.note_add_rounded, size: 40, color: Color(0xFFCBD5E1)),
+          const Icon(Icons.note_add_rounded,
+              size: 40, color: Color(0xFFCBD5E1)),
           const SizedBox(height: 12),
           Text(
             l10n.noDossier,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+            style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF0F172A)),
           ),
           const SizedBox(height: 4),
           Text(
@@ -248,7 +335,8 @@ class HomeView extends StatelessWidget {
             onPressed: () => Navigator.pushNamed(context, '/nouvelle_demande'),
             style: ElevatedButton.styleFrom(
               minimumSize: const Size(160, 40),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
             ),
             child: Text(l10n.start),
           ),
@@ -263,9 +351,11 @@ class HomeView extends StatelessWidget {
         double crossAxisSpacing = 12;
         double mainAxisSpacing = 12;
         int crossAxisCount = constraints.maxWidth > 600 ? 3 : 2;
-        double width = (constraints.maxWidth - (crossAxisCount - 1) * crossAxisSpacing) / crossAxisCount;
-        double height = 110; 
-        
+        double width =
+            (constraints.maxWidth - (crossAxisCount - 1) * crossAxisSpacing) /
+                crossAxisCount;
+        double height = 110;
+
         return GridView.count(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -304,7 +394,8 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildActionItem(String label, IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildActionItem(
+      String label, IconData icon, Color color, VoidCallback onTap) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -332,7 +423,10 @@ class HomeView extends StatelessWidget {
                 ),
                 Text(
                   label,
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                  style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF0F172A)),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -344,47 +438,81 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildRecentActivity(AppLocalizations l10n) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF10B981).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+  Widget _buildRecentActivity(
+  AppLocalizations l10n,
+  String title,
+  IconData icon,
+  String when, {
+  VoidCallback? onTap,
+}) {
+  return Card(
+    elevation: 0,
+    color: Colors.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+      side: const BorderSide(color: Color(0xFFE2E8F0)),
+    ),
+    child: InkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: () {
+        debugPrint("Recent activity clicked");
+        if (onTap != null) {
+          onTap();
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                color: const Color(0xFF10B981),
+                size: 20,
+              ),
             ),
-            child: const Icon(Icons.verified_rounded, color: Color(0xFF10B981), size: 20),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.docValidated,
-                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Color(0xFF0F172A)),
-                ),
-                const SizedBox(height: 1),
-                const Text(
-                  "Votre pièce d'identité a été approuvée.",
-                  style: TextStyle(fontSize: 12, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
-                ),
-              ],
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.docValidated,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 13,
+                      color: Color(0xFF0F172A),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF64748B),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const Text(
-            'Hier',
-            style: TextStyle(fontSize: 10, color: Color(0xFF94A3B8), fontWeight: FontWeight.w600),
-          ),
-        ],
+            Text(
+              when,
+              style: const TextStyle(
+                fontSize: 10,
+                color: Color(0xFF94A3B8),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
