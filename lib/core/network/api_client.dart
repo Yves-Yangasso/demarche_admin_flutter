@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiClient {
   final String baseUrl = Platform.isAndroid
-      ? "http://192.168.1.11:5001/api" // For Android emulator to reach localhost
+      ? "http:/sunudek-api-stag.djazael.com/api" // For Android emulator to reach localhost
       : "http://localhost:5001/api";
 
   final _storage = const FlutterSecureStorage();
