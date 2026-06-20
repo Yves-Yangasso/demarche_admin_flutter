@@ -28,35 +28,54 @@ class _MainNavigationState extends State<MainNavigation> {
 
   @override
   Widget build(BuildContext context) {
+    // Safe area système : sur téléphones Android modernes la gesture-bar
+    // mesure 16-48 px selon constructeur. Sans cette marge dynamique, la
+    // bottom nav est collée (ou masquée) par la barre noire.
+    final bottomSafe = MediaQuery.of(context).padding.bottom;
+    const navHeight = 68.0;
+    const navMarginBottomBase = 16.0;
+    // Hauteur totale occupée visuellement par la nav = à reporter sur les
+    // pages enfant pour qu'elles ne soient pas masquées par le float-effect.
+    final reservedBottom = navHeight + navMarginBottomBase + bottomSafe;
+
     return Scaffold(
       extendBody: true,
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _pages,
-      ),
-      bottomNavigationBar: Container(
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-        height: 68,
-        decoration: BoxDecoration(
-          color: const Color(0xFF176848),
-          borderRadius: BorderRadius.circular(34),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF176848).withValues(alpha: 0.3),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
+      body: MediaQuery.removePadding(
+        // Les pages reçoivent leur padding bottom via `bottomPadding`
+        // exposé en InheritedWidget — on évite le double padding.
+        context: context,
+        removeBottom: true,
+        child: _BottomInset(
+          inset: reservedBottom,
+          child: IndexedStack(index: _selectedIndex, children: _pages),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _buildNavItem(0, Icons.home_rounded, Icons.home_outlined, 'Accueil'),
-            _buildNavItem(1, Icons.folder_rounded, Icons.folder_outlined, 'Dossiers'),
-            _buildNavItem(2, Icons.smart_toy_rounded, Icons.smart_toy_outlined, 'IA'),
-            _buildNavItemWithBadge(3, Icons.notifications_rounded, Icons.notifications_outlined, 'Alertes'),
-            _buildNavItem(4, Icons.person_rounded, Icons.person_outline_rounded, 'Profil'),
-          ],
+      ),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.fromLTRB(
+            16, 0, 16, navMarginBottomBase + bottomSafe),
+        child: Container(
+          height: navHeight,
+          decoration: BoxDecoration(
+            color: const Color(0xFF176848),
+            borderRadius: BorderRadius.circular(34),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF176848).withValues(alpha: 0.3),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildNavItem(0, Icons.home_rounded, Icons.home_outlined, 'Accueil'),
+              _buildNavItem(1, Icons.folder_rounded, Icons.folder_outlined, 'Dossiers'),
+              _buildNavItem(2, Icons.smart_toy_rounded, Icons.smart_toy_outlined, 'IA'),
+              _buildNavItemWithBadge(3, Icons.notifications_rounded, Icons.notifications_outlined, 'Alertes'),
+              _buildNavItem(4, Icons.person_rounded, Icons.person_outline_rounded, 'Profil'),
+            ],
+          ),
         ),
       ),
     );
@@ -157,6 +176,27 @@ class _MainNavigationState extends State<MainNavigation> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Injecte un padding bottom dans le MediaQuery des pages enfant pour qu'elles
+/// laissent de la place à la bottom nav flottante (et ne soient pas masquées
+/// par celle-ci). À utiliser à la racine d'un body avec `extendBody: true`.
+class _BottomInset extends StatelessWidget {
+  final double inset;
+  final Widget child;
+  const _BottomInset({required this.inset, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context);
+    return MediaQuery(
+      data: mq.copyWith(
+        padding: mq.padding.copyWith(bottom: inset),
+        viewPadding: mq.viewPadding.copyWith(bottom: inset),
+      ),
+      child: child,
     );
   }
 }

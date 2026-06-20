@@ -37,6 +37,7 @@ import 'presentation/views/assistance_view.dart';
 import 'presentation/views/splash_view.dart';
 import 'presentation/views/onboarding_view.dart';
 import 'presentation/views/chatbot_view.dart';
+import 'presentation/views/suivi_public_view.dart';
 import 'models/models.dart';
 import 'workflow/workflow.dart';
 import 'workflow/status.dart';
@@ -183,6 +184,9 @@ class SunuDekkApp extends StatelessWidget {
 
         // Profile
         '/identity_verification': (context) => const IdentityVerificationView(),
+
+        // Suivi public (sans authentification, conforme RGPD)
+        '/suivi_public': (context) => const SuiviPublicView(),
       },
       onGenerateRoute: (settings) {
         switch (settings.name) {

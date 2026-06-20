@@ -112,12 +112,30 @@ class _LoginViewState extends State<LoginView>
           child: Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24.0),
-              child: Column(
-                children: [
-                  //  _buildLogo(),
-                  // const SizedBox(height: 40),
-                  _buildLoginForm(),
-                ],
+              child: ConstrainedBox(
+                // Borne sup pour ne pas s'étaler sur tablette / web — le form
+                // reste lisible à 480px max comme une carte de compte.
+                constraints: const BoxConstraints(maxWidth: 480),
+                child: Column(
+                  children: [
+                    _buildLoginForm(),
+                    const SizedBox(height: 16),
+                    // Suivi public : accessible sans authentification (RGPD).
+                    TextButton.icon(
+                      onPressed: () =>
+                          Navigator.of(context).pushNamed('/suivi_public'),
+                      icon: const Icon(Icons.search_rounded,
+                          color: Color(0xFF176848)),
+                      label: const Text(
+                        'Suivre un dossier sans compte',
+                        style: TextStyle(
+                          color: Color(0xFF176848),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -127,14 +145,18 @@ class _LoginViewState extends State<LoginView>
   }
 
   Widget _buildLogo() {
+    // Taille proportionnelle bornée — sur grand écran le logo ne dépasse pas
+    // 160px (vs 40% de la hauteur qui pouvait monter à 350px sur tablette).
+    final shortest = MediaQuery.of(context).size.shortestSide;
+    final logoSize = (shortest * 0.32).clamp(96.0, 160.0);
     return Column(
       children: [
         Image.asset(
-          "assets/images/logo.png",
-            width: MediaQuery.of(context).size.height*0.4,
-            height: MediaQuery.of(context).size.height*0.4,   
+          'assets/images/logo.png',
+          width: logoSize,
+          height: logoSize,
         ),
-         SizedBox(height: MediaQuery.of(context).size.height*0.01),
+        const SizedBox(height: 8),
       ],
     );
   }

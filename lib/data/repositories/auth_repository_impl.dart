@@ -37,7 +37,7 @@ class AuthRepositoryImpl implements IAuthRepository {
   }
 
   @override
-  Future<bool> verifyPhoneOtp(String telephone, String code) async {
+  Future<OtpVerificationResult> verifyPhoneOtp(String telephone, String code) async {
     try {
       final response = await _apiClient.post("/auth/otp/verifier", {
         "telephone": telephone,
@@ -47,7 +47,12 @@ class AuthRepositoryImpl implements IAuthRepository {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         await _apiClient.saveToken(data['access_token'], data['refresh_token']);
-        return true;
+        // S4 : le backend expose `nouveau` pour distinguer premier login
+        // (router vers onboarding) vs récurrent.
+        return OtpVerificationResult(
+          success: true,
+          isNewUser: data['nouveau'] == true,
+        );
       } else {
         throw AuthFailure("Code SMS invalide ou expiré.");
       }
@@ -58,7 +63,7 @@ class AuthRepositoryImpl implements IAuthRepository {
   }
 
   @override
-  Future<bool> verifyEmailOtp(String email, String code) async {
+  Future<OtpVerificationResult> verifyEmailOtp(String email, String code) async {
     try {
       final response = await _apiClient.post("/auth/email/verifier", {
         "email": email,
@@ -68,7 +73,10 @@ class AuthRepositoryImpl implements IAuthRepository {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         await _apiClient.saveToken(data['access_token'], data['refresh_token']);
-        return true;
+        return OtpVerificationResult(
+          success: true,
+          isNewUser: data['nouveau'] == true,
+        );
       } else {
         throw AuthFailure("Code email invalide ou expiré.");
       }

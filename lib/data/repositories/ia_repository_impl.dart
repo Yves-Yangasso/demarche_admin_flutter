@@ -9,9 +9,14 @@ class IARepositoryImpl implements IIARepository {
   IARepositoryImpl(this._apiClient);
 
   @override
-  Future<String> getChatbotResponse(String message) async {
+  Future<String> getChatbotResponse(String message, {String lang = 'fr'}) async {
     try {
-      final response = await _apiClient.post("/ia/chatbot", {"message": message});
+      // M2 : on transmet la langue pour que le prompt système côté backend
+      // ajuste sa réponse (Wolof / Français / Anglais).
+      final response = await _apiClient.post("/ia/chatbot", {
+        "message": message,
+        "lang": lang,
+      });
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return data['reponse'] ?? data['message'] ?? "Désolé, je n'ai pas pu comprendre votre demande.";

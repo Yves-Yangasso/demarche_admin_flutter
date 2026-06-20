@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/app_localizations.dart';
+import '../../../core/network/api_client.dart';
+import '../../../data/repositories/paiement_repository_impl.dart';
 import '../../providers/dossier_provider.dart';
 
 enum PaymentMethod { wave, orangeMoney }
@@ -47,42 +49,55 @@ class _PaymentViewState extends State<PaymentView> with TickerProviderStateMixin
 
   Future<void> _processPayment() async {
     setState(() => _isProcessing = true);
-    // Simulate payment processing
-    await Future.delayed(const Duration(seconds: 2));
 
-    // Submit dossier to backend
     try {
+      // 1. Création du dossier
       final dossierProvider = context.read<DossierProvider>();
+      final canal = _selected == PaymentMethod.wave ? 'wave' : 'orange_money';
       final dossier = await dossierProvider.createDossier({
         ...widget.dossierData,
-        'methode_paiement': _selected == PaymentMethod.wave ? 'wave' : 'orange_money',
+        'methode_paiement': canal,
         'montant_paye': widget.prix,
       });
 
-      if (dossier != null && mounted) {
-        // Upload documents attachés au dossier
-        for (var entry in widget.uploadedFiles.entries) {
-          final file = entry.value;
-          if (file != null) {
-            await dossierProvider.uploadDocument(
-              dossier.id,
-              file.path,
-              nom: entry.key, // ou récupérer le vrai libellé si possible
-            );
-          }
-        }
-
-        setState(() {
-          _isProcessing = false;
-          _paymentDone = true;
-        });
-        _successCtrl.forward();
+      if (dossier == null) {
+        throw Exception('Création du dossier impossible.');
       }
+      if (!mounted) return;
+
+      // 2. Upload documents attachés au dossier
+      for (var entry in widget.uploadedFiles.entries) {
+        final file = entry.value;
+        if (file != null) {
+          await dossierProvider.uploadDocument(
+            dossier.id,
+            file.path,
+            nom: entry.key,
+          );
+        }
+      }
+
+      // 3. B7 — Initialisation du paiement via /api/paiements/initier.
+      // C'est cet appel qui crée l'enregistrement Paiement côté back (statut INITIE),
+      // déclenche l'éventuel webhook Wave/Orange et trace l'opération dans l'audit.
+      final paiementRepo = PaiementRepository(ApiClient());
+      await paiementRepo.initier(
+        dossierId: dossier.id,
+        canal: canal,
+        montantFcfa: widget.prix,
+      );
+
+      if (!mounted) return;
+      setState(() {
+        _isProcessing = false;
+        _paymentDone = true;
+      });
+      _successCtrl.forward();
     } catch (e) {
       if (mounted) {
         setState(() => _isProcessing = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text('Erreur paiement: $e'), backgroundColor: Colors.red),
         );
       }
     }

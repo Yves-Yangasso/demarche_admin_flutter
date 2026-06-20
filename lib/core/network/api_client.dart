@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiClient {
   final String baseUrl = Platform.isAndroid
-      ? "http://192.168.254.114:5001/api" // For Android emulator to reach localhost
+      ? "http://192.168.1.11:5001/api" // For Android emulator to reach localhost
       : "http://localhost:5001/api";
 
   final _storage = const FlutterSecureStorage();
@@ -43,6 +43,14 @@ class ApiClient {
     return await http.get(
       Uri.parse("$baseUrl$endpoint"),
       headers: await _getHeaders(),
+    );
+  }
+
+  /// GET sans header Authorization — pour les endpoints publics (suivi, verify).
+  Future<http.Response> getPublic(String endpoint) async {
+    return await http.get(
+      Uri.parse("$baseUrl$endpoint"),
+      headers: const {'Content-Type': 'application/json'},
     );
   }
 

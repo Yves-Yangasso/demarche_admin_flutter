@@ -1,11 +1,19 @@
 import 'package:http/http.dart' as http;
 import '../../models/models.dart';
 
+/// Résultat d'une vérification OTP : success + flag indiquant si c'est un
+/// nouvel utilisateur (à router vers onboarding).
+class OtpVerificationResult {
+  final bool success;
+  final bool isNewUser;
+  const OtpVerificationResult({required this.success, this.isNewUser = false});
+}
+
 abstract class IAuthRepository {
   Future<void> sendPhoneOtp(String telephone);
   Future<void> sendEmailOtp(String email);
-  Future<bool> verifyPhoneOtp(String telephone, String code);
-  Future<bool> verifyEmailOtp(String email, String code);
+  Future<OtpVerificationResult> verifyPhoneOtp(String telephone, String code);
+  Future<OtpVerificationResult> verifyEmailOtp(String email, String code);
   Future<http.Response> register({
     required String nom,
     required String prenom,

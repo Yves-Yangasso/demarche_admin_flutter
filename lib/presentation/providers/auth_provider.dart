@@ -19,6 +19,15 @@ class AuthProvider with ChangeNotifier {
   Utilisateur? _currentUser;
   Utilisateur? get currentUser => _currentUser;
 
+  /// True après la dernière vérification OTP si l'utilisateur n'avait jamais
+  /// été connecté auparavant (à router vers `/onboarding`). Reset après lecture.
+  bool _isNewUser = false;
+  bool consumeIsNewUserFlag() {
+    final v = _isNewUser;
+    _isNewUser = false;
+    return v;
+  }
+
   void clearError() {
     _error = null;
     notifyListeners();
@@ -75,9 +84,12 @@ class AuthProvider with ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
-      final success = await _repository.verifyPhoneOtp(telephone, code);
-      if (success) await checkAuth();
-      return success;
+      final result = await _repository.verifyPhoneOtp(telephone, code);
+      if (result.success) {
+        _isNewUser = result.isNewUser;
+        await checkAuth();
+      }
+      return result.success;
     } catch (e) {
       _error = e.toString();
       rethrow;
@@ -92,9 +104,12 @@ class AuthProvider with ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
-      final success = await _repository.verifyEmailOtp(email, code);
-      if (success) await checkAuth();
-      return success;
+      final result = await _repository.verifyEmailOtp(email, code);
+      if (result.success) {
+        _isNewUser = result.isNewUser;
+        await checkAuth();
+      }
+      return result.success;
     } catch (e) {
       _error = e.toString();
       rethrow;

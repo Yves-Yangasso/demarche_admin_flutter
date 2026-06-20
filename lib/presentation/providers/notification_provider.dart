@@ -22,13 +22,15 @@ class AppNotification {
   });
 
   factory AppNotification.fromJson(Map<String, dynamic> json) {
+    // M4 : contrat backend stabilisé sur snake_case français — titre, message, lu.
+    // (cf. app/models/historique_statut.py::Notification.to_dict())
     return AppNotification(
       id: json['id'].toString(),
-      title: json['titre'] ?? json['title'] ?? 'Notification',
-      body: json['message'] ?? json['body'] ?? '',
-      type: json['type'] ?? 'info',
-      date: DateTime.tryParse(json['created_at'] ?? '') ?? DateTime.now(),
-      isRead: json['lu'] ?? json['is_read'] ?? false,
+      title: (json['titre'] ?? 'Notification').toString(),
+      body: (json['message'] ?? '').toString(),
+      type: (json['type'] ?? 'info').toString(),
+      date: DateTime.tryParse(json['created_at']?.toString() ?? '') ?? DateTime.now(),
+      isRead: json['lu'] == true,
       dossierId: json['dossier_id']?.toString(),
     );
   }

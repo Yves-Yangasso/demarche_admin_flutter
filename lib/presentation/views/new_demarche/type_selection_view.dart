@@ -113,7 +113,9 @@ class _TypeSelectionViewState extends State<TypeSelectionView> {
               arguments: {
                 'type_id': type['id'],
                 'type_nom': type['nom'],
-                'prix': type['prix'] ?? 0,
+                // Le backend expose le montant via `frais` (modèle TypeDemarche).
+                // On garde `prix` en alias rétro-compat pour les anciens seeds.
+                'prix': type['frais'] ?? type['prix'] ?? 0,
                 'organisation_nom': type['organisation_nom'] ?? _orgArgs?['organisation_nom'] ?? '',
                 'categorie_nom': _categoryName,
               }

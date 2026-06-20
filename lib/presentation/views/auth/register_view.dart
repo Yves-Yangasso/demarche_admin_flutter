@@ -49,7 +49,8 @@ class _RegisterViewState extends State<RegisterView> {
       return;
     }
     if (!_consentement) {
-      _showError('Vous devez accepter les conditions de traitement de vos données.');
+      _showError(
+          'Vous devez accepter les conditions de traitement de vos données.');
       return;
     }
 
@@ -126,80 +127,16 @@ class _RegisterViewState extends State<RegisterView> {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Image.asset(
-            "assets/images/logo.png",
-             width: MediaQuery.of(context).size.height*0.2,
-                height: MediaQuery.of(context).size.height*0.2,   
-          ),
-          _buildHeader(),
-          TextField(
-            controller: _nomController,
-            decoration: const InputDecoration(
-              labelText: "Nom",
-              prefixIcon: Icon(Icons.person_rounded),
-            ),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _prenomController,
-            decoration: const InputDecoration(
-              labelText: "Prénom",
-              prefixIcon: Icon(Icons.person_outline_rounded),
-            ),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _phoneController,
-            keyboardType: TextInputType.phone,
-            decoration: const InputDecoration(
-              labelText: "Téléphone",
-              prefixIcon: Icon(Icons.phone_iphone_rounded),
-            ),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _emailController,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              labelText: "Email",
-              prefixIcon: Icon(Icons.alternate_email_rounded),
-            ),
-          ),
-          const SizedBox(height: 32),
-          ElevatedButton(
-            onPressed: isLoading ? null : _register,
-            child: isLoading
-                ? const SizedBox(
-                    height: 24,
-                    width: 24,
-                    child: CircularProgressIndicator(
-                        color: Colors.white, strokeWidth: 3))
-                : const Text("S'inscrire"),
-          ),
-          const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text("Déjà inscrit ?",
-                  style: TextStyle(color: Color(0xFF64748B))),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text("Se connecter",
-                    style: TextStyle(fontWeight: FontWeight.w800)),
-              ),
-            ],
-          ),
-        ],
-      ),
       child: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Image.asset("assets/images/logo.png"),
+            Image.asset(
+              "assets/images/logo.png",
+              width: MediaQuery.of(context).size.height * 0.2,
+              height: MediaQuery.of(context).size.height * 0.2,
+            ),
             const _Header(),
             TextFormField(
               controller: _nomController,
@@ -219,8 +156,9 @@ class _RegisterViewState extends State<RegisterView> {
                 labelText: "Prénom *",
                 prefixIcon: Icon(Icons.person_outline_rounded),
               ),
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Le prénom est requis.' : null,
+              validator: (v) => (v == null || v.trim().isEmpty)
+                  ? 'Le prénom est requis.'
+                  : null,
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -244,8 +182,15 @@ class _RegisterViewState extends State<RegisterView> {
               ),
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return null;
-                final emailRe = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-                if (!emailRe.hasMatch(v.trim())) return 'Email invalide.';
+
+                final emailRe = RegExp(
+                  r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+                );
+
+                if (!emailRe.hasMatch(v.trim())) {
+                  return 'Email invalide.';
+                }
+
                 return null;
               },
             ),
@@ -262,7 +207,9 @@ class _RegisterViewState extends State<RegisterView> {
                       height: 24,
                       width: 24,
                       child: CircularProgressIndicator(
-                          color: Colors.white, strokeWidth: 3),
+                        color: Colors.white,
+                        strokeWidth: 3,
+                      ),
                     )
                   : const Text("S'inscrire"),
             ),
@@ -270,12 +217,16 @@ class _RegisterViewState extends State<RegisterView> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("Déjà inscrit ?",
-                    style: TextStyle(color: Color(0xFF64748B))),
+                const Text(
+                  "Déjà inscrit ?",
+                  style: TextStyle(color: Color(0xFF64748B)),
+                ),
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text("Se connecter",
-                      style: TextStyle(fontWeight: FontWeight.w800)),
+                  child: const Text(
+                    "Se connecter",
+                    style: TextStyle(fontWeight: FontWeight.w800),
+                  ),
                 ),
               ],
             ),
