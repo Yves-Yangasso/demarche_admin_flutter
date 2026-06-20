@@ -46,7 +46,7 @@ class ApiClient {
     );
   }
 
-  /// GET sans header Authorization — pour les endpoints publics (suivi, verify).
+  /// GET sans header Authorization - pour les endpoints publics (suivi, verify).
   Future<http.Response> getPublic(String endpoint) async {
     return await http.get(
       Uri.parse("$baseUrl$endpoint"),
@@ -62,7 +62,8 @@ class ApiClient {
     );
   }
 
-  Future<http.Response> patch(String endpoint, Map<String, dynamic> data) async {
+  Future<http.Response> patch(
+      String endpoint, Map<String, dynamic> data) async {
     return await http.patch(
       Uri.parse("$baseUrl$endpoint"),
       headers: await _getHeaders(),
@@ -89,7 +90,7 @@ class ApiClient {
     final uri = Uri.parse("$baseUrl$endpoint");
     final request = http.MultipartRequest('POST', uri);
 
-    // Headers d'authentification (sans Content-Type — géré par multipart)
+    // Headers d'authentification (sans Content-Type - géré par multipart)
     final authHeaders = await _getAuthHeader();
     request.headers.addAll(authHeaders);
 

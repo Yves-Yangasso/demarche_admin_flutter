@@ -58,8 +58,10 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => LanguageProvider()),
-        ChangeNotifierProvider(create: (_) => AuthProvider(authRepository)..checkAuth()),
-        ChangeNotifierProvider(create: (_) => DossierProvider(dossierRepository)),
+        ChangeNotifierProvider(
+            create: (_) => AuthProvider(authRepository)..checkAuth()),
+        ChangeNotifierProvider(
+            create: (_) => DossierProvider(dossierRepository)),
         ChangeNotifierProvider(create: (_) => IAProvider(iaRepository)),
         ChangeNotifierProvider(create: (_) => NotificationProvider(apiClient)),
       ],
@@ -100,15 +102,19 @@ class SunuDekkApp extends StatelessWidget {
           surface: const Color(0xFFF8FAFC),
         ),
         textTheme: GoogleFonts.interTextTheme().copyWith(
-          displayLarge: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
-          titleLarge: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+          displayLarge:
+              const TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+          titleLarge:
+              const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
           bodyLarge: const TextStyle(fontSize: 14),
           bodyMedium: const TextStyle(fontSize: 13),
-          labelLarge: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          labelLarge:
+              const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
         ),
         cardTheme: CardThemeData(
           elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           color: Colors.white,
           margin: EdgeInsets.zero,
         ),
@@ -131,9 +137,13 @@ class SunuDekkApp extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1.5),
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           hintStyle: const TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
-          labelStyle: const TextStyle(fontSize: 13, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
+          labelStyle: const TextStyle(
+              fontSize: 13,
+              color: Color(0xFF64748B),
+              fontWeight: FontWeight.w500),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
@@ -141,16 +151,20 @@ class SunuDekkApp extends StatelessWidget {
             backgroundColor: const Color(0xFF176848),
             foregroundColor: Colors.white,
             minimumSize: const Size.fromHeight(48),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            textStyle:
+                const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
           ),
         ),
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
             minimumSize: const Size.fromHeight(48),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             side: const BorderSide(color: Color(0xFFE2E8F0)),
-            textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+            textStyle:
+                const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
           ),
         ),
       ),
@@ -163,9 +177,10 @@ class SunuDekkApp extends StatelessWidget {
         '/register': (context) => const RegisterView(),
         '/home': (context) => const MainNavigation(),
 
-        // Démarches — New flow
+        // Démarches - New flow
         '/organisations': (context) => const OrganisationsView(),
-        '/organisation_categories': (context) => const OrganisationCategoriesView(),
+        '/organisation_categories': (context) =>
+            const OrganisationCategoriesView(),
         '/nouvelle_demande': (context) => const OrganisationsView(),
         '/demarche_types': (context) => const TypeSelectionView(),
         '/request_stepper': (context) => const RequestStepperView(),
@@ -213,7 +228,8 @@ class SunuDekkApp extends StatelessWidget {
   }
 }
 
-class FallbackMaterialLocalizationDelegate extends LocalizationsDelegate<MaterialLocalizations> {
+class FallbackMaterialLocalizationDelegate
+    extends LocalizationsDelegate<MaterialLocalizations> {
   const FallbackMaterialLocalizationDelegate();
 
   @override
@@ -227,7 +243,8 @@ class FallbackMaterialLocalizationDelegate extends LocalizationsDelegate<Materia
   bool shouldReload(FallbackMaterialLocalizationDelegate old) => false;
 }
 
-class FallbackCupertinoLocalizationDelegate extends LocalizationsDelegate<CupertinoLocalizations> {
+class FallbackCupertinoLocalizationDelegate
+    extends LocalizationsDelegate<CupertinoLocalizations> {
   const FallbackCupertinoLocalizationDelegate();
 
   @override
@@ -241,7 +258,8 @@ class FallbackCupertinoLocalizationDelegate extends LocalizationsDelegate<Cupert
   bool shouldReload(FallbackCupertinoLocalizationDelegate old) => false;
 }
 
-class FallbackWidgetsLocalizationDelegate extends LocalizationsDelegate<WidgetsLocalizations> {
+class FallbackWidgetsLocalizationDelegate
+    extends LocalizationsDelegate<WidgetsLocalizations> {
   const FallbackWidgetsLocalizationDelegate();
 
   @override

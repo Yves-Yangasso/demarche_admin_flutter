@@ -22,8 +22,10 @@ class DossierRepositoryImpl implements IDossierRepository {
       final response = await _apiClient.get("/citoyens/me/dossiers");
       if (response.statusCode == 200) {
         final dynamic data = jsonDecode(response.body);
-        final List dossiersJson = data is List ? data : (data['dossiers'] ?? []);
-        final dossiers = dossiersJson.map((json) => Dossier.fromJson(json)).toList();
+        final List dossiersJson =
+            data is List ? data : (data['dossiers'] ?? []);
+        final dossiers =
+            dossiersJson.map((json) => Dossier.fromJson(json)).toList();
 
         await _localDb.saveDossiers(dossiers);
         return dossiers;
@@ -41,10 +43,12 @@ class DossierRepositoryImpl implements IDossierRepository {
   @override
   Future<List<Dossier>> getMesDossiersPagines(int page, int size) async {
     try {
-      final response = await _apiClient.get("/citoyens/me/dossiers?page=$page&size=$size");
+      final response =
+          await _apiClient.get("/citoyens/me/dossiers?page=$page&size=$size");
       if (response.statusCode == 200) {
         final dynamic data = jsonDecode(response.body);
-        final List dossiersJson = data is List ? data : (data['dossiers'] ?? []);
+        final List dossiersJson =
+            data is List ? data : (data['dossiers'] ?? []);
         return dossiersJson.map((json) => Dossier.fromJson(json)).toList();
       }
       return [];
@@ -53,7 +57,8 @@ class DossierRepositoryImpl implements IDossierRepository {
       if (cached.isNotEmpty) {
         final start = (page - 1) * size;
         if (start >= cached.length) return [];
-        final end = (start + size > cached.length) ? cached.length : start + size;
+        final end =
+            (start + size > cached.length) ? cached.length : start + size;
         return cached.sublist(start, end);
       }
       if (e is Failure) rethrow;
@@ -79,7 +84,8 @@ class DossierRepositoryImpl implements IDossierRepository {
   }
 
   @override
-  Future<List<dynamic>> getDemarches(int? categorieId, {int? organisationId}) async {
+  Future<List<dynamic>> getDemarches(int? categorieId,
+      {int? organisationId}) async {
     try {
       final params = <String>[];
       if (categorieId != null) params.add('categorie_id=$categorieId');
@@ -116,34 +122,134 @@ class DossierRepositoryImpl implements IDossierRepository {
       final response = await _apiClient.get("/collectivites");
       if (response.statusCode == 200) {
         final List data = jsonDecode(response.body);
-        return data.map((c) => {
-          'id': c['id'],
-          'nom': c['nom'],
-          'description': c['description'] ?? c['adresse'] ?? '',
-          'nb_types': c['nb_procedures'] ?? 0,
-          'type': c['type'] ?? 'commune',
-          'region': c['region'] ?? '',
-        }).toList();
+        return data
+            .map((c) => {
+                  'id': c['id'],
+                  'nom': c['nom'],
+                  'description': c['description'] ?? c['adresse'] ?? '',
+                  'nb_types': c['nb_procedures'] ?? 0,
+                  'type': c['type'] ?? 'commune',
+                  'region': c['region'] ?? '',
+                })
+            .toList();
       }
       throw ServerFailure("Impossible de charger les organisations.");
     } catch (e) {
       if (e is Failure) rethrow;
       // Fallback données démo enrichies si aucune connexion
       return [
-        {'id': 1, 'nom': 'Mairie de Dakar', 'description': 'Services municipaux de la capitale', 'nb_types': 8, 'type': 'mairie', 'region': 'Dakar'},
-        {'id': 2, 'nom': 'Mairie de Thiès', 'description': 'Services municipaux de Thiès', 'nb_types': 6, 'type': 'mairie', 'region': 'Thiès'},
-        {'id': 3, 'nom': 'Mairie de Saint-Louis', 'description': 'Services municipaux de Saint-Louis', 'nb_types': 5, 'type': 'mairie', 'region': 'Saint-Louis'},
-        {'id': 4, 'nom': 'Mairie de Ziguinchor', 'description': 'Services municipaux de Ziguinchor', 'nb_types': 4, 'type': 'mairie', 'region': 'Ziguinchor'},
-        {'id': 5, 'nom': 'Mairie de Kaolack', 'description': 'Services municipaux de Kaolack', 'nb_types': 5, 'type': 'mairie', 'region': 'Kaolack'},
-        {'id': 6, 'nom': 'Police Nationale — Dakar', 'description': 'Documents de sécurité et casier judiciaire', 'nb_types': 4, 'type': 'police', 'region': 'Dakar'},
-        {'id': 7, 'nom': 'Police Nationale — Thiès', 'description': 'Documents de sécurité et casier judiciaire', 'nb_types': 3, 'type': 'police', 'region': 'Thiès'},
-        {'id': 8, 'nom': 'Ministère de la Justice', 'description': 'Actes judiciaires, légalisation et apostille', 'nb_types': 5, 'type': 'justice', 'region': 'Dakar'},
-        {'id': 9, 'nom': 'Tribunal de Thiès', 'description': 'Actes judiciaires et légalisation', 'nb_types': 3, 'type': 'justice', 'region': 'Thiès'},
-        {'id': 10, 'nom': 'Hôpital Principal de Dakar', 'description': 'Documents médicaux et administratifs', 'nb_types': 3, 'type': 'sante', 'region': 'Dakar'},
-        {'id': 11, 'nom': 'Centre de Santé de Touba', 'description': 'Documents médicaux et certificats', 'nb_types': 2, 'type': 'sante', 'region': 'Diourbel'},
-        {'id': 12, 'nom': 'Direction des Transports Terrestres', 'description': 'Permis de conduire et immatriculations', 'nb_types': 6, 'type': 'transport', 'region': 'Dakar'},
-        {'id': 13, 'nom': 'Inspection Académie de Dakar', 'description': 'Documents scolaires et diplômes', 'nb_types': 4, 'type': 'education', 'region': 'Dakar'},
-        {'id': 14, 'nom': 'Inspection Académie de Kaolack', 'description': 'Documents scolaires et diplômes', 'nb_types': 3, 'type': 'education', 'region': 'Kaolack'},
+        {
+          'id': 1,
+          'nom': 'Mairie de Dakar',
+          'description': 'Services municipaux de la capitale',
+          'nb_types': 8,
+          'type': 'mairie',
+          'region': 'Dakar'
+        },
+        {
+          'id': 2,
+          'nom': 'Mairie de Thiès',
+          'description': 'Services municipaux de Thiès',
+          'nb_types': 6,
+          'type': 'mairie',
+          'region': 'Thiès'
+        },
+        {
+          'id': 3,
+          'nom': 'Mairie de Saint-Louis',
+          'description': 'Services municipaux de Saint-Louis',
+          'nb_types': 5,
+          'type': 'mairie',
+          'region': 'Saint-Louis'
+        },
+        {
+          'id': 4,
+          'nom': 'Mairie de Ziguinchor',
+          'description': 'Services municipaux de Ziguinchor',
+          'nb_types': 4,
+          'type': 'mairie',
+          'region': 'Ziguinchor'
+        },
+        {
+          'id': 5,
+          'nom': 'Mairie de Kaolack',
+          'description': 'Services municipaux de Kaolack',
+          'nb_types': 5,
+          'type': 'mairie',
+          'region': 'Kaolack'
+        },
+        {
+          'id': 6,
+          'nom': 'Police Nationale - Dakar',
+          'description': 'Documents de sécurité et casier judiciaire',
+          'nb_types': 4,
+          'type': 'police',
+          'region': 'Dakar'
+        },
+        {
+          'id': 7,
+          'nom': 'Police Nationale - Thiès',
+          'description': 'Documents de sécurité et casier judiciaire',
+          'nb_types': 3,
+          'type': 'police',
+          'region': 'Thiès'
+        },
+        {
+          'id': 8,
+          'nom': 'Ministère de la Justice',
+          'description': 'Actes judiciaires, légalisation et apostille',
+          'nb_types': 5,
+          'type': 'justice',
+          'region': 'Dakar'
+        },
+        {
+          'id': 9,
+          'nom': 'Tribunal de Thiès',
+          'description': 'Actes judiciaires et légalisation',
+          'nb_types': 3,
+          'type': 'justice',
+          'region': 'Thiès'
+        },
+        {
+          'id': 10,
+          'nom': 'Hôpital Principal de Dakar',
+          'description': 'Documents médicaux et administratifs',
+          'nb_types': 3,
+          'type': 'sante',
+          'region': 'Dakar'
+        },
+        {
+          'id': 11,
+          'nom': 'Centre de Santé de Touba',
+          'description': 'Documents médicaux et certificats',
+          'nb_types': 2,
+          'type': 'sante',
+          'region': 'Diourbel'
+        },
+        {
+          'id': 12,
+          'nom': 'Direction des Transports Terrestres',
+          'description': 'Permis de conduire et immatriculations',
+          'nb_types': 6,
+          'type': 'transport',
+          'region': 'Dakar'
+        },
+        {
+          'id': 13,
+          'nom': 'Inspection Académie de Dakar',
+          'description': 'Documents scolaires et diplômes',
+          'nb_types': 4,
+          'type': 'education',
+          'region': 'Dakar'
+        },
+        {
+          'id': 14,
+          'nom': 'Inspection Académie de Kaolack',
+          'description': 'Documents scolaires et diplômes',
+          'nb_types': 3,
+          'type': 'education',
+          'region': 'Kaolack'
+        },
       ];
     }
   }
@@ -151,7 +257,8 @@ class DossierRepositoryImpl implements IDossierRepository {
   @override
   Future<List<dynamic>> getDocumentsCriteres(int typeId) async {
     try {
-      final response = await _apiClient.get("/dossiers/types/$typeId/documents");
+      final response =
+          await _apiClient.get("/dossiers/types/$typeId/documents");
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       }
@@ -178,7 +285,8 @@ class DossierRepositoryImpl implements IDossierRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> sendMessage(int dossierId, String contenu) async {
+  Future<Map<String, dynamic>> sendMessage(
+      int dossierId, String contenu) async {
     try {
       final response = await _apiClient.post(
         "/messages/dossier/$dossierId",

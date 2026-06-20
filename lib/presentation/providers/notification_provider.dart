@@ -22,14 +22,15 @@ class AppNotification {
   });
 
   factory AppNotification.fromJson(Map<String, dynamic> json) {
-    // M4 : contrat backend stabilisé sur snake_case français — titre, message, lu.
+    // M4 : contrat backend stabilisé sur snake_case français - titre, message, lu.
     // (cf. app/models/historique_statut.py::Notification.to_dict())
     return AppNotification(
       id: json['id'].toString(),
       title: (json['titre'] ?? 'Notification').toString(),
       body: (json['message'] ?? '').toString(),
       type: (json['type'] ?? 'info').toString(),
-      date: DateTime.tryParse(json['created_at']?.toString() ?? '') ?? DateTime.now(),
+      date: DateTime.tryParse(json['created_at']?.toString() ?? '') ??
+          DateTime.now(),
       isRead: json['lu'] == true,
       dossierId: json['dossier_id']?.toString(),
     );
@@ -44,20 +45,21 @@ class NotificationProvider with ChangeNotifier {
   List<AppNotification> _notifications = [];
   List<AppNotification> get notifications => _notifications;
   int get unreadCount => _notifications.where((n) => !n.isRead).length;
-  
+
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
   Future<void> fetchNotifications() async {
     _isLoading = true;
     notifyListeners();
-    
+
     try {
       final response = await _apiClient.get("/notifications");
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final List notifsJson = data['notifications'] ?? [];
-        _notifications = notifsJson.map((json) => AppNotification.fromJson(json)).toList();
+        _notifications =
+            notifsJson.map((json) => AppNotification.fromJson(json)).toList();
       }
     } catch (e) {
       // Ignorer l'erreur pour ne pas bloquer l'UI
@@ -74,7 +76,7 @@ class NotificationProvider with ChangeNotifier {
       _notifications[idx].isRead = true;
       notifyListeners();
     }
-    
+
     try {
       await _apiClient.patch("/notifications/$id/lire", {});
     } catch (e) {

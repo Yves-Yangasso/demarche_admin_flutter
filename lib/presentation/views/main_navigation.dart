@@ -42,7 +42,7 @@ class _MainNavigationState extends State<MainNavigation> {
       extendBody: true,
       body: MediaQuery.removePadding(
         // Les pages reçoivent leur padding bottom via `bottomPadding`
-        // exposé en InheritedWidget — on évite le double padding.
+        // exposé en InheritedWidget - on évite le double padding.
         context: context,
         removeBottom: true,
         child: _BottomInset(
@@ -51,8 +51,8 @@ class _MainNavigationState extends State<MainNavigation> {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: EdgeInsets.fromLTRB(
-            16, 0, 16, navMarginBottomBase + bottomSafe),
+        padding:
+            EdgeInsets.fromLTRB(16, 0, 16, navMarginBottomBase + bottomSafe),
         child: Container(
           height: navHeight,
           decoration: BoxDecoration(
@@ -69,11 +69,16 @@ class _MainNavigationState extends State<MainNavigation> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildNavItem(0, Icons.home_rounded, Icons.home_outlined, 'Accueil'),
-              _buildNavItem(1, Icons.folder_rounded, Icons.folder_outlined, 'Dossiers'),
-              _buildNavItem(2, Icons.smart_toy_rounded, Icons.smart_toy_outlined, 'IA'),
-              _buildNavItemWithBadge(3, Icons.notifications_rounded, Icons.notifications_outlined, 'Alertes'),
-              _buildNavItem(4, Icons.person_rounded, Icons.person_outline_rounded, 'Profil'),
+              _buildNavItem(
+                  0, Icons.home_rounded, Icons.home_outlined, 'Accueil'),
+              _buildNavItem(
+                  1, Icons.folder_rounded, Icons.folder_outlined, 'Dossiers'),
+              _buildNavItem(
+                  2, Icons.smart_toy_rounded, Icons.smart_toy_outlined, 'IA'),
+              _buildNavItemWithBadge(3, Icons.notifications_rounded,
+                  Icons.notifications_outlined, 'Alertes'),
+              _buildNavItem(4, Icons.person_rounded,
+                  Icons.person_outline_rounded, 'Profil'),
             ],
           ),
         ),
@@ -81,7 +86,8 @@ class _MainNavigationState extends State<MainNavigation> {
     );
   }
 
-  Widget _buildNavItem(int index, IconData selectedIcon, IconData unselectedIcon, String label) {
+  Widget _buildNavItem(
+      int index, IconData selectedIcon, IconData unselectedIcon, String label) {
     final isSelected = _selectedIndex == index;
     return GestureDetector(
       onTap: () => setState(() => _selectedIndex = index),
@@ -91,7 +97,9 @@ class _MainNavigationState extends State<MainNavigation> {
         curve: Curves.easeInOut,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white.withValues(alpha: 0.12) : Colors.transparent,
+          color: isSelected
+              ? Colors.white.withValues(alpha: 0.12)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
@@ -99,7 +107,9 @@ class _MainNavigationState extends State<MainNavigation> {
           children: [
             Icon(
               isSelected ? selectedIcon : unselectedIcon,
-              color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.45),
+              color: isSelected
+                  ? Colors.white
+                  : Colors.white.withValues(alpha: 0.45),
               size: 22,
             ),
             if (isSelected) ...[
@@ -107,7 +117,8 @@ class _MainNavigationState extends State<MainNavigation> {
               Container(
                 width: 4,
                 height: 4,
-                decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                decoration: const BoxDecoration(
+                    color: Colors.white, shape: BoxShape.circle),
               ),
             ],
           ],
@@ -116,7 +127,8 @@ class _MainNavigationState extends State<MainNavigation> {
     );
   }
 
-  Widget _buildNavItemWithBadge(int index, IconData selectedIcon, IconData unselectedIcon, String label) {
+  Widget _buildNavItemWithBadge(
+      int index, IconData selectedIcon, IconData unselectedIcon, String label) {
     final isSelected = _selectedIndex == index;
     return GestureDetector(
       onTap: () => setState(() => _selectedIndex = index),
@@ -126,7 +138,9 @@ class _MainNavigationState extends State<MainNavigation> {
         curve: Curves.easeInOut,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white.withValues(alpha: 0.12) : Colors.transparent,
+          color: isSelected
+              ? Colors.white.withValues(alpha: 0.12)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
@@ -139,7 +153,9 @@ class _MainNavigationState extends State<MainNavigation> {
                   children: [
                     Icon(
                       isSelected ? selectedIcon : unselectedIcon,
-                      color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.45),
+                      color: isSelected
+                          ? Colors.white
+                          : Colors.white.withValues(alpha: 0.45),
                       size: 22,
                     ),
                     if (provider.unreadCount > 0)
@@ -155,8 +171,13 @@ class _MainNavigationState extends State<MainNavigation> {
                           ),
                           child: Center(
                             child: Text(
-                              provider.unreadCount > 9 ? '9+' : '${provider.unreadCount}',
-                              style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900),
+                              provider.unreadCount > 9
+                                  ? '9+'
+                                  : '${provider.unreadCount}',
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.w900),
                             ),
                           ),
                         ),
@@ -170,7 +191,8 @@ class _MainNavigationState extends State<MainNavigation> {
               Container(
                 width: 4,
                 height: 4,
-                decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                decoration: const BoxDecoration(
+                    color: Colors.white, shape: BoxShape.circle),
               ),
             ],
           ],

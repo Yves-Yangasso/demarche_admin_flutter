@@ -103,7 +103,8 @@ const Map<String, String> appEn = {
   'dossier_pending': 'Pending',
   'dossier_processing': 'Processing',
   'correct_and_resubmit': 'Correct & Resubmit',
-  'correction_instructions': 'Modify the incorrect information and relaunch your request.',
+  'correction_instructions':
+      'Modify the incorrect information and relaunch your request.',
   'track_progress': 'Track Progress',
 
   // Profile
@@ -129,7 +130,8 @@ const Map<String, String> appEn = {
 
   // AI Assistant
   'ask_ai': 'Ask your question to the assistant...',
-  'ai_greeting': 'Hello! I am your administrative assistant. How can I help you?',
+  'ai_greeting':
+      'Hello! I am your administrative assistant. How can I help you?',
 
   // Errors
   'network_error': 'Network error. Check your connection.',
@@ -168,7 +170,7 @@ const Map<String, String> appEn = {
   'doc_front': 'Front of the document *',
   'doc_back_optional': 'Back of the document (optional)',
   'tap_to_scan': 'Tap to scan',
-  'img_format_size': 'JPG, PNG — max 10MB',
+  'img_format_size': 'JPG, PNG - max 10MB',
   'identity_verified_excl': 'Identity verified!',
   'perfect': 'Perfect!',
   'verification_failed': 'Verification failed',

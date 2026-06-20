@@ -27,7 +27,8 @@ class PaymentView extends StatefulWidget {
   State<PaymentView> createState() => _PaymentViewState();
 }
 
-class _PaymentViewState extends State<PaymentView> with TickerProviderStateMixin {
+class _PaymentViewState extends State<PaymentView>
+    with TickerProviderStateMixin {
   PaymentMethod _selected = PaymentMethod.wave;
   bool _isProcessing = false;
   bool _paymentDone = false;
@@ -37,8 +38,10 @@ class _PaymentViewState extends State<PaymentView> with TickerProviderStateMixin
   @override
   void initState() {
     super.initState();
-    _successCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
-    _successAnim = CurvedAnimation(parent: _successCtrl, curve: Curves.elasticOut);
+    _successCtrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 600));
+    _successAnim =
+        CurvedAnimation(parent: _successCtrl, curve: Curves.elasticOut);
   }
 
   @override
@@ -77,7 +80,7 @@ class _PaymentViewState extends State<PaymentView> with TickerProviderStateMixin
         }
       }
 
-      // 3. B7 — Initialisation du paiement via /api/paiements/initier.
+      // 3. B7 - Initialisation du paiement via /api/paiements/initier.
       // C'est cet appel qui crée l'enregistrement Paiement côté back (statut INITIE),
       // déclenche l'éventuel webhook Wave/Orange et trace l'opération dans l'audit.
       final paiementRepo = PaiementRepository(ApiClient());
@@ -97,7 +100,9 @@ class _PaymentViewState extends State<PaymentView> with TickerProviderStateMixin
       if (mounted) {
         setState(() => _isProcessing = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur paiement: $e'), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text('Erreur paiement: $e'),
+              backgroundColor: Colors.red),
         );
       }
     }
@@ -116,7 +121,10 @@ class _PaymentViewState extends State<PaymentView> with TickerProviderStateMixin
         elevation: 0,
         iconTheme: const IconThemeData(color: Color(0xFF0F172A)),
         title: Text(l10n.payment,
-            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20, color: Color(0xFF0F172A))),
+            style: const TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: 20,
+                color: Color(0xFF0F172A))),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -146,19 +154,27 @@ class _PaymentViewState extends State<PaymentView> with TickerProviderStateMixin
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(widget.typeNom,
-                      style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 13)),
+                      style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.8),
+                          fontSize: 13)),
                   const SizedBox(height: 8),
                   Text(
                     '${widget.prix.toStringAsFixed(0)} FCFA',
-                    style: const TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.w900),
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 36,
+                        fontWeight: FontWeight.w900),
                   ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(Icons.info_outline_rounded, size: 14, color: Colors.white.withValues(alpha: 0.7)),
+                      Icon(Icons.info_outline_rounded,
+                          size: 14, color: Colors.white.withValues(alpha: 0.7)),
                       const SizedBox(width: 6),
                       Text(l10n.priceSetByAdmin,
-                          style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 12)),
+                          style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.7),
+                              fontSize: 12)),
                     ],
                   ),
                 ],
@@ -168,7 +184,10 @@ class _PaymentViewState extends State<PaymentView> with TickerProviderStateMixin
 
             // Payment method
             Text(l10n.paymentMethod,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF0F172A))),
+                style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF0F172A))),
             const SizedBox(height: 12),
 
             // Wave
@@ -206,7 +225,8 @@ class _PaymentViewState extends State<PaymentView> with TickerProviderStateMixin
                 children: [
                   const Row(
                     children: [
-                      Icon(Icons.info_rounded, color: Color(0xFFF59E0B), size: 18),
+                      Icon(Icons.info_rounded,
+                          color: Color(0xFFF59E0B), size: 18),
                       SizedBox(width: 8),
                       Text('Instructions',
                           style: TextStyle(
@@ -220,7 +240,8 @@ class _PaymentViewState extends State<PaymentView> with TickerProviderStateMixin
                     _selected == PaymentMethod.wave
                         ? '1. Ouvrez votre app Wave\n2. Scannez le QR code qui apparaîtra\n3. Confirmez le paiement de ${widget.prix.toStringAsFixed(0)} FCFA'
                         : '1. Composez *144# sur votre téléphone\n2. Choisissez "Paiement marchand"\n3. Entrez le code: TERREADMIN\n4. Confirmez le paiement de ${widget.prix.toStringAsFixed(0)} FCFA',
-                    style: const TextStyle(fontSize: 13, color: Color(0xFF92400E), height: 1.6),
+                    style: const TextStyle(
+                        fontSize: 13, color: Color(0xFF92400E), height: 1.6),
                   ),
                 ],
               ),
@@ -234,7 +255,8 @@ class _PaymentViewState extends State<PaymentView> with TickerProviderStateMixin
                 onPressed: _isProcessing ? null : _processPayment,
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(0, 56),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
                   backgroundColor: const Color(0xFF176848),
                 ),
                 child: _isProcessing
@@ -244,14 +266,17 @@ class _PaymentViewState extends State<PaymentView> with TickerProviderStateMixin
                           SizedBox(
                             width: 20,
                             height: 20,
-                            child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                            child: CircularProgressIndicator(
+                                color: Colors.white, strokeWidth: 2),
                           ),
                           SizedBox(width: 12),
-                          Text('Traitement en cours...', style: TextStyle(fontWeight: FontWeight.w700)),
+                          Text('Traitement en cours...',
+                              style: TextStyle(fontWeight: FontWeight.w700)),
                         ],
                       )
                     : Text(l10n.paymentConfirm,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w800)),
               ),
             ),
           ],
@@ -282,7 +307,12 @@ class _PaymentViewState extends State<PaymentView> with TickerProviderStateMixin
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
-              ? [BoxShadow(color: color.withValues(alpha: 0.15), blurRadius: 12, offset: const Offset(0, 4))]
+              ? [
+                  BoxShadow(
+                      color: color.withValues(alpha: 0.15),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4))
+                ]
               : [],
         ),
         child: Row(
@@ -307,11 +337,14 @@ class _PaymentViewState extends State<PaymentView> with TickerProviderStateMixin
                           fontSize: 15,
                           color: isSelected ? color : const Color(0xFF0F172A))),
                   Text(description,
-                      style: const TextStyle(fontSize: 12, color: Color(0xFF64748B))),
+                      style: const TextStyle(
+                          fontSize: 12, color: Color(0xFF64748B))),
                   const SizedBox(height: 4),
                   Text(subtitle,
                       style: TextStyle(
-                          fontSize: 11, color: color.withValues(alpha: 0.8), fontWeight: FontWeight.w600)),
+                          fontSize: 11,
+                          color: color.withValues(alpha: 0.8),
+                          fontWeight: FontWeight.w600)),
                 ],
               ),
             ),
@@ -322,10 +355,13 @@ class _PaymentViewState extends State<PaymentView> with TickerProviderStateMixin
               decoration: BoxDecoration(
                 color: isSelected ? color : Colors.white,
                 shape: BoxShape.circle,
-                border: Border.all(color: isSelected ? color : const Color(0xFFCBD5E1), width: 2),
+                border: Border.all(
+                    color: isSelected ? color : const Color(0xFFCBD5E1),
+                    width: 2),
               ),
               child: isSelected
-                  ? const Icon(Icons.check_rounded, size: 14, color: Colors.white)
+                  ? const Icon(Icons.check_rounded,
+                      size: 14, color: Colors.white)
                   : null,
             ),
           ],
@@ -360,38 +396,48 @@ class _PaymentViewState extends State<PaymentView> with TickerProviderStateMixin
                 const SizedBox(height: 32),
                 const Text(
                   'Demande soumise !',
-                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900, color: Color(0xFF0F172A)),
+                  style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFF0F172A)),
                 ),
                 const SizedBox(height: 12),
                 Text(
                   'Votre demande pour "${widget.typeNom}" a été soumise avec succès. Vous recevrez une notification lorsque votre dossier sera traité.',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 14, color: Color(0xFF64748B), height: 1.6),
+                  style: const TextStyle(
+                      fontSize: 14, color: Color(0xFF64748B), height: 1.6),
                 ),
                 const SizedBox(height: 48),
                 ElevatedButton(
-                  onPressed: () =>
-                      Navigator.of(context).pushNamedAndRemoveUntil('/home', (r) => false),
+                  onPressed: () => Navigator.of(context)
+                      .pushNamedAndRemoveUntil('/home', (r) => false),
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 52),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14)),
                   ),
                   child: const Text('Retour à l\'accueil',
-                      style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
                 ),
                 const SizedBox(height: 12),
                 OutlinedButton(
                   onPressed: () {
-                    Navigator.of(context).pushNamedAndRemoveUntil('/home', (r) => false);
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil('/home', (r) => false);
                     // Navigate to dossiers
                   },
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 52),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14)),
                     side: const BorderSide(color: Color(0xFFE2E8F0)),
                   ),
                   child: const Text('Voir mes dossiers',
-                      style: TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+                      style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF0F172A))),
                 ),
               ],
             ),

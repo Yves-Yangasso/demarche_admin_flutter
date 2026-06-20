@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 
-// Numéros sénégalais : 70, 76, 77, 78 — 9 chiffres, +221 optionnel
+// Numéros sénégalais : 70, 76, 77, 78 - 9 chiffres, +221 optionnel
 final _phoneRe = RegExp(r'^(?:\+221|00221)?[7][0678]\d{7}$');
 
 String? _validatePhone(String? value) {

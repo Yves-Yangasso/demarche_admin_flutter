@@ -103,7 +103,8 @@ const Map<String, String> appFr = {
   'dossier_pending': 'En attente',
   'dossier_processing': 'En cours',
   'correct_and_resubmit': 'Corriger et relancer',
-  'correction_instructions': 'Modifiez les informations incorrectes et relancez votre demande.',
+  'correction_instructions':
+      'Modifiez les informations incorrectes et relancez votre demande.',
   'track_progress': 'Suivi de dossier',
 
   // Profile
@@ -129,7 +130,8 @@ const Map<String, String> appFr = {
 
   // AI Assistant
   'ask_ai': "Posez votre question à l'assistant...",
-  'ai_greeting': 'Bonjour ! Je suis votre assistant administratif. Comment puis-je vous aider ?',
+  'ai_greeting':
+      'Bonjour ! Je suis votre assistant administratif. Comment puis-je vous aider ?',
 
   // Errors
   'network_error': 'Erreur réseau. Vérifiez votre connexion.',
@@ -168,7 +170,7 @@ const Map<String, String> appFr = {
   'doc_front': 'Recto du document *',
   'doc_back_optional': 'Verso du document (optionnel)',
   'tap_to_scan': 'Appuyez pour scanner',
-  'img_format_size': 'JPG, PNG — max 10MB',
+  'img_format_size': 'JPG, PNG - max 10MB',
   'identity_verified_excl': 'Identité vérifiée !',
   'perfect': 'Parfait !',
   'verification_failed': 'Vérification échouée',

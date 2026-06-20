@@ -1,4 +1,4 @@
-// lib/core/l10n/app_wo.dart — Wolof translations
+// lib/core/l10n/app_wo.dart - Wolof translations
 const Map<String, String> appWo = {
   // General
   'app_name': 'Sunu Dekk',
@@ -129,7 +129,8 @@ const Map<String, String> appWo = {
 
   // AI Assistant
   'ask_ai': 'Laaj sa laaj ci ndimbal bi...',
-  'ai_greeting': 'Mbaa ngaaw! Maa ngi dëkk ndimbal buñu ci kanam. Ngay ndam ci dara?',
+  'ai_greeting':
+      'Mbaa ngaaw! Maa ngi dëkk ndimbal buñu ci kanam. Ngay ndam ci dara?',
 
   // Errors
   'network_error': 'Njëkk réseau. Xool sa conexion.',
@@ -168,7 +169,7 @@ const Map<String, String> appWo = {
   'doc_front': 'Kanamu këyit bi *',
   'doc_back_optional': 'Ginaaw këyit bi (optional)',
   'tap_to_scan': 'Bësal ngir scan',
-  'img_format_size': 'JPG, PNG — max 10MB',
+  'img_format_size': 'JPG, PNG - max 10MB',
   'identity_verified_excl': 'Sa identité wér na!',
   'perfect': 'Mat na!',
   'verification_failed': 'Wérul ba noppi',

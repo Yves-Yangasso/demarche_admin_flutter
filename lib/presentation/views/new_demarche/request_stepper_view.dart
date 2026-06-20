@@ -23,7 +23,7 @@ class _RequestStepperViewState extends State<RequestStepperView> {
   // Form keys
   final _infoFormKey = GlobalKey<FormState>();
 
-  // Step 1 — Info controllers (pre-filled from user profile)
+  // Step 1 - Info controllers (pre-filled from user profile)
   final _nomCtrl = TextEditingController();
   final _prenomCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
@@ -37,13 +37,13 @@ class _RequestStepperViewState extends State<RequestStepperView> {
   final _nomMereCtrl = TextEditingController();
   final _commentaireCtrl = TextEditingController();
 
-  // Step 2 — Documents
+  // Step 2 - Documents
   Map<String, File?> _uploadedFiles = {};
   List<Map<String, dynamic>> _requiredDocs = [];
 
-  // Step 3 — Recap & terms
+  // Step 3 - Recap & terms
   bool _acceptedTerms = false;
-   bool _step3 = false;
+  bool _step3 = false;
   // Route args
   Map<String, dynamic>? _args;
   bool _argsPrefilled = false;
@@ -52,7 +52,8 @@ class _RequestStepperViewState extends State<RequestStepperView> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_argsPrefilled) {
-      _args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      _args =
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
       _prefillForm();
       _loadRequiredDocs();
       _argsPrefilled = true;
@@ -74,7 +75,8 @@ class _RequestStepperViewState extends State<RequestStepperView> {
     final typeId = _args?['type_id'];
     if (typeId == null) return;
     try {
-      final docs = await context.read<DossierProvider>().getDocumentsCriteres(typeId);
+      final docs =
+          await context.read<DossierProvider>().getDocumentsCriteres(typeId);
       setState(() {
         _requiredDocs = List<Map<String, dynamic>>.from(docs);
         _uploadedFiles = {for (var d in docs) d['id'].toString(): null};
@@ -92,7 +94,8 @@ class _RequestStepperViewState extends State<RequestStepperView> {
   }
 
   bool _canNext() {
-    if (_currentStep == 0) return _infoFormKey.currentState?.validate() ?? false;
+    if (_currentStep == 0)
+      return _infoFormKey.currentState?.validate() ?? false;
     if (_currentStep == 1) {
       return _requiredDocs.isEmpty ||
           _requiredDocs.every((d) {
@@ -105,7 +108,8 @@ class _RequestStepperViewState extends State<RequestStepperView> {
   }
 
   bool _canNextStepFour() {
-    if (_currentStep == 3) return _infoFormKey.currentState?.validate() ?? false;
+    if (_currentStep == 3)
+      return _infoFormKey.currentState?.validate() ?? false;
     if (_currentStep == 2) {
       return _requiredDocs.isEmpty ||
           _requiredDocs.every((d) {
@@ -116,6 +120,7 @@ class _RequestStepperViewState extends State<RequestStepperView> {
     if (_currentStep == 2) return _acceptedTerms;
     return true;
   }
+
   Future<void> _submitAndPay() async {
     if (!_acceptedTerms) return;
 
@@ -165,11 +170,15 @@ class _RequestStepperViewState extends State<RequestStepperView> {
         elevation: 0,
         centerTitle: false,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: Color(0xFF0F172A)),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              size: 18, color: Color(0xFF0F172A)),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(typeNom,
-            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17, color: Color(0xFF0F172A))),
+            style: const TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: 17,
+                color: Color(0xFF0F172A))),
       ),
       body: Column(
         children: [
@@ -197,7 +206,12 @@ class _RequestStepperViewState extends State<RequestStepperView> {
   }
 
   Widget _buildStepIndicator(AppLocalizations l10n) {
-    final steps = [l10n.stepInfo, l10n.stepDocs,   l10n.stepInfoIdentity, l10n.stepRecap,];
+    final steps = [
+      l10n.stepInfo,
+      l10n.stepDocs,
+      l10n.stepInfoIdentity,
+      l10n.stepRecap,
+    ];
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Row(
@@ -238,13 +252,16 @@ class _RequestStepperViewState extends State<RequestStepperView> {
                             ),
                             child: Center(
                               child: isDone
-                                  ? const Icon(Icons.check_rounded, size: 13, color: Colors.white)
+                                  ? const Icon(Icons.check_rounded,
+                                      size: 13, color: Colors.white)
                                   : Text(
                                       '${i + 1}',
                                       style: TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.w800,
-                                        color: isActive ? Colors.white : const Color(0xFF94A3B8),
+                                        color: isActive
+                                            ? Colors.white
+                                            : const Color(0xFF94A3B8),
                                       ),
                                     ),
                             ),
@@ -255,7 +272,9 @@ class _RequestStepperViewState extends State<RequestStepperView> {
                               steps[i],
                               style: TextStyle(
                                 fontSize: 11,
-                                fontWeight: isActive ? FontWeight.w800 : FontWeight.w500,
+                                fontWeight: isActive
+                                    ? FontWeight.w800
+                                    : FontWeight.w500,
                                 color: isActive
                                     ? const Color(0xFF176848)
                                     : isDone
@@ -291,19 +310,26 @@ class _RequestStepperViewState extends State<RequestStepperView> {
             const SizedBox(height: 12),
             _sectionTitle('Informations personnelles', Icons.person_rounded),
             const SizedBox(height: 18),
-          
-            _field(l10n.firstName, _prenomCtrl, required: true, icon: Icons.person_outline_rounded),
-              const SizedBox(height: 12),
-            _field(l10n.lastName, _nomCtrl, required: true, icon: Icons.person_outline_rounded),
+
+            _field(l10n.firstName, _prenomCtrl,
+                required: true, icon: Icons.person_outline_rounded),
             const SizedBox(height: 12),
-            _field(l10n.email, _emailCtrl, keyboard: TextInputType.emailAddress, icon: Icons.email_outlined),
+            _field(l10n.lastName, _nomCtrl,
+                required: true, icon: Icons.person_outline_rounded),
             const SizedBox(height: 12),
-            _field(l10n.phone, _telephoneCtrl, keyboard: TextInputType.phone, required: true, icon: Icons.phone_outlined),
+            _field(l10n.email, _emailCtrl,
+                keyboard: TextInputType.emailAddress,
+                icon: Icons.email_outlined),
+            const SizedBox(height: 12),
+            _field(l10n.phone, _telephoneCtrl,
+                keyboard: TextInputType.phone,
+                required: true,
+                icon: Icons.phone_outlined),
             const SizedBox(height: 20),
-             _field(l10n.fatherName, _nomPereCtrl, icon: Icons.male_rounded),
+            _field(l10n.fatherName, _nomPereCtrl, icon: Icons.male_rounded),
             const SizedBox(height: 12),
             _field(l10n.motherName, _nomMereCtrl, icon: Icons.female_rounded),
-           // _sectionTitle('Filiation', Icons.family_restroom_rounded),
+            // _sectionTitle('Filiation', Icons.family_restroom_rounded),
           ],
         ),
       ),
@@ -348,7 +374,10 @@ class _RequestStepperViewState extends State<RequestStepperView> {
           Expanded(
             child: Text(
               'Aucun document spécifique requis pour ce type de démarche.',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF065F46)),
+              style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF065F46)),
             ),
           ),
         ],
@@ -388,7 +417,8 @@ class _RequestStepperViewState extends State<RequestStepperView> {
         ),
         clipBehavior: Clip.antiAlias,
         child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           leading: Container(
             width: 44,
             height: 44,
@@ -399,8 +429,12 @@ class _RequestStepperViewState extends State<RequestStepperView> {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
-              isUploaded ? Icons.check_circle_rounded : Icons.upload_file_rounded,
-              color: isUploaded ? const Color(0xFF10B981) : const Color(0xFF176848),
+              isUploaded
+                  ? Icons.check_circle_rounded
+                  : Icons.upload_file_rounded,
+              color: isUploaded
+                  ? const Color(0xFF10B981)
+                  : const Color(0xFF176848),
               size: 22,
             ),
           ),
@@ -409,11 +443,14 @@ class _RequestStepperViewState extends State<RequestStepperView> {
               Expanded(
                 child: Text(
                   doc['nom'] ?? doc['libelle'] ?? 'Document',
-                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w700, fontSize: 14),
                 ),
               ),
               if (isRequired)
-                const Text(' *', style: TextStyle(color: Color(0xFFEF4444), fontWeight: FontWeight.w900)),
+                const Text(' *',
+                    style: TextStyle(
+                        color: Color(0xFFEF4444), fontWeight: FontWeight.w900)),
             ],
           ),
           subtitle: Column(
@@ -421,18 +458,26 @@ class _RequestStepperViewState extends State<RequestStepperView> {
             children: [
               if (doc['description'] != null) ...[
                 const SizedBox(height: 4),
-                Text(doc['description'], style: const TextStyle(fontSize: 12, color: Color(0xFF64748B))),
+                Text(doc['description'],
+                    style: const TextStyle(
+                        fontSize: 12, color: Color(0xFF64748B))),
               ],
               if (doc['criteres'] != null && doc['criteres'].isNotEmpty) ...[
                 const SizedBox(height: 4),
                 Text('• ${doc['criteres']}',
-                    style: const TextStyle(fontSize: 11, color: Color(0xFF6366F1), fontWeight: FontWeight.w500)),
+                    style: const TextStyle(
+                        fontSize: 11,
+                        color: Color(0xFF6366F1),
+                        fontWeight: FontWeight.w500)),
               ],
               if (isUploaded) ...[
                 const SizedBox(height: 4),
                 Text(
                   file!.path.split('/').last,
-                  style: const TextStyle(fontSize: 11, color: Color(0xFF10B981), fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      fontSize: 11,
+                      color: Color(0xFF10B981),
+                      fontWeight: FontWeight.w600),
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -463,7 +508,9 @@ class _RequestStepperViewState extends State<RequestStepperView> {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
-                  color: isUploaded ? const Color(0xFF10B981) : const Color(0xFF176848),
+                  color: isUploaded
+                      ? const Color(0xFF10B981)
+                      : const Color(0xFF176848),
                 ),
               ),
             ),
@@ -473,7 +520,7 @@ class _RequestStepperViewState extends State<RequestStepperView> {
     );
   }
 
-    // Step 3: Information
+  // Step 3: Information
   Widget _buildStep3Info(AppLocalizations l10n) {
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
@@ -486,15 +533,20 @@ class _RequestStepperViewState extends State<RequestStepperView> {
             _sectionTitle('Identité de la personne', Icons.badge_rounded),
             const SizedBox(height: 18),
             _field(l10n.birthDate, _dateNaissCtrl,
-                hint: 'JJ/MM/AAAA', keyboard: TextInputType.datetime, icon: Icons.calendar_today_rounded),
+                hint: 'JJ/MM/AAAA',
+                keyboard: TextInputType.datetime,
+                icon: Icons.calendar_today_rounded),
             const SizedBox(height: 12),
-            _field(l10n.birthPlace, _lieuNaissCtrl, icon: Icons.location_city_rounded),
+            _field(l10n.birthPlace, _lieuNaissCtrl,
+                icon: Icons.location_city_rounded),
             const SizedBox(height: 12),
-            _field(l10n.nationality, _nationaliteCtrl, icon: Icons.flag_rounded),
+            _field(l10n.nationality, _nationaliteCtrl,
+                icon: Icons.flag_rounded),
             const SizedBox(height: 12),
             _field(l10n.idNumber, _numeroCniCtrl, icon: Icons.badge_outlined),
             const SizedBox(height: 12),
-            _field(l10n.address, _adresseCtrl, maxLines: 2, icon: Icons.home_outlined),
+            _field(l10n.address, _adresseCtrl,
+                maxLines: 2, icon: Icons.home_outlined),
             const SizedBox(height: 20),
             _sectionTitle(l10n.comment, Icons.comment_rounded),
             const SizedBox(height: 12),
@@ -518,7 +570,6 @@ class _RequestStepperViewState extends State<RequestStepperView> {
       ),
     );
   }
-
 
   // Step 3: Recap
   Widget _buildStep4Recap(AppLocalizations l10n) {
@@ -569,7 +620,8 @@ class _RequestStepperViewState extends State<RequestStepperView> {
                 border: Border.all(color: const Color(0xFFE2E8F0)),
               ),
               child: Text(_commentaireCtrl.text,
-                  style: const TextStyle(fontSize: 14, color: Color(0xFF0F172A))),
+                  style:
+                      const TextStyle(fontSize: 14, color: Color(0xFF0F172A))),
             ),
           ],
           const SizedBox(height: 12),
@@ -584,7 +636,9 @@ class _RequestStepperViewState extends State<RequestStepperView> {
                     return _recapRow(
                       d['nom'] ?? '',
                       uploaded ? '✅ Fourni' : '❌ Non fourni',
-                      valueColor: uploaded ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+                      valueColor: uploaded
+                          ? const Color(0xFF10B981)
+                          : const Color(0xFFEF4444),
                     );
                   }).toList(),
             const Color(0xFF0F172A),
@@ -608,7 +662,8 @@ class _RequestStepperViewState extends State<RequestStepperView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text('Montant à payer',
-                          style: TextStyle(color: Colors.white70, fontSize: 12)),
+                          style:
+                              TextStyle(color: Colors.white70, fontSize: 12)),
                       const SizedBox(height: 4),
                       Text('${prix.toStringAsFixed(0)} FCFA',
                           style: const TextStyle(
@@ -617,7 +672,8 @@ class _RequestStepperViewState extends State<RequestStepperView> {
                               fontWeight: FontWeight.w900)),
                     ],
                   ),
-                  const Icon(Icons.payment_rounded, color: Colors.white70, size: 32),
+                  const Icon(Icons.payment_rounded,
+                      color: Colors.white70, size: 32),
                 ],
               ),
             ),
@@ -633,22 +689,29 @@ class _RequestStepperViewState extends State<RequestStepperView> {
                   width: 22,
                   height: 22,
                   decoration: BoxDecoration(
-                    color: _acceptedTerms ? const Color(0xFF176848) : Colors.white,
+                    color:
+                        _acceptedTerms ? const Color(0xFF176848) : Colors.white,
                     border: Border.all(
-                      color: _acceptedTerms ? const Color(0xFF176848) : const Color(0xFFCBD5E1),
+                      color: _acceptedTerms
+                          ? const Color(0xFF176848)
+                          : const Color(0xFFCBD5E1),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: _acceptedTerms
-                      ? const Icon(Icons.check_rounded, size: 14, color: Colors.white)
+                      ? const Icon(Icons.check_rounded,
+                          size: 14, color: Colors.white)
                       : null,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     l10n.acceptTerms,
-                    style: const TextStyle(fontSize: 13, color: Color(0xFF0F172A), fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                        fontSize: 13,
+                        color: Color(0xFF0F172A),
+                        fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
@@ -666,7 +729,10 @@ class _RequestStepperViewState extends State<RequestStepperView> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
-          BoxShadow(color: accentColor.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))
+          BoxShadow(
+              color: accentColor.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2))
         ],
       ),
       child: Column(
@@ -692,12 +758,15 @@ class _RequestStepperViewState extends State<RequestStepperView> {
           Expanded(
             flex: 2,
             child: Text(label,
-                style: const TextStyle(fontSize: 13, color: Color(0xFF64748B), fontWeight: FontWeight.w500)),
+                style: const TextStyle(
+                    fontSize: 13,
+                    color: Color(0xFF64748B),
+                    fontWeight: FontWeight.w500)),
           ),
           Expanded(
             flex: 3,
             child: Text(
-              value.isEmpty ? '—' : value,
+              value.isEmpty ? '-' : value,
               textAlign: TextAlign.right,
               style: TextStyle(
                 fontSize: 13,
@@ -729,10 +798,14 @@ class _RequestStepperViewState extends State<RequestStepperView> {
                   side: const BorderSide(color: Color(0xFFE2E8F0), width: 1.5),
                   backgroundColor: Colors.white,
                   minimumSize: const Size(0, 52),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
                 ),
                 child: Text(l10n.previous,
-                    style: const TextStyle(color: Color(0xFF64748B), fontWeight: FontWeight.w800, fontSize: 15)),
+                    style: const TextStyle(
+                        color: Color(0xFF64748B),
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15)),
               ),
             ),
           if (_currentStep > 0) const SizedBox(width: 12),
@@ -746,7 +819,8 @@ class _RequestStepperViewState extends State<RequestStepperView> {
                   if (!_canNext()) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Veuillez fournir tous les documents obligatoires marqués par une étoile (*).'),
+                        content: Text(
+                            'Veuillez fournir tous les documents obligatoires marqués par une étoile (*).'),
                         backgroundColor: Color(0xFFEF4444),
                         behavior: SnackBarBehavior.floating,
                       ),
@@ -754,13 +828,14 @@ class _RequestStepperViewState extends State<RequestStepperView> {
                     return;
                   }
                   _goTo(2);
-                } else if(_currentStep==2) {
-                      _goTo(3);
-                  }else {
+                } else if (_currentStep == 2) {
+                  _goTo(3);
+                } else {
                   if (!_acceptedTerms) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Vous devez accepter les conditions pour continuer.'),
+                        content: Text(
+                            'Vous devez accepter les conditions pour continuer.'),
                         backgroundColor: Color(0xFFEF4444),
                         behavior: SnackBarBehavior.floating,
                       ),
@@ -773,13 +848,17 @@ class _RequestStepperViewState extends State<RequestStepperView> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF176848),
                 minimumSize: const Size(0, 52),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16)),
                 elevation: 4,
                 shadowColor: const Color(0xFF176848).withValues(alpha: 0.4),
               ),
               child: Text(
                 _currentStep < 3 ? l10n.next : 'Payer & Soumettre',
-                style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: Colors.white),
+                style: const TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 15,
+                    color: Colors.white),
               ),
             ),
           ),
@@ -802,7 +881,10 @@ class _RequestStepperViewState extends State<RequestStepperView> {
         ),
         const SizedBox(width: 10),
         Text(title,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Color(0xFF0F172A))),
+            style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF0F172A))),
       ],
     );
   }
@@ -820,13 +902,16 @@ class _RequestStepperViewState extends State<RequestStepperView> {
       controller: ctrl,
       keyboardType: keyboard,
       maxLines: maxLines,
-      style: const TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF0F172A), fontSize: 14),
+      style: const TextStyle(
+          fontWeight: FontWeight.w600, color: Color(0xFF0F172A), fontSize: 14),
       decoration: InputDecoration(
         labelText: required ? '$label *' : label,
         hintText: hint,
         filled: true,
         fillColor: const Color(0xFFF8FAFC),
-        prefixIcon: icon != null ? Icon(icon, color: const Color(0xFF94A3B8), size: 20) : null,
+        prefixIcon: icon != null
+            ? Icon(icon, color: const Color(0xFF94A3B8), size: 20)
+            : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
@@ -843,9 +928,11 @@ class _RequestStepperViewState extends State<RequestStepperView> {
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1.5),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
-      validator: required ? (v) => (v == null || v.isEmpty) ? 'Requis' : null : null,
+      validator:
+          required ? (v) => (v == null || v.isEmpty) ? 'Requis' : null : null,
     );
   }
 

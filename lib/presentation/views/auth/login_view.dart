@@ -59,7 +59,8 @@ class _LoginViewState extends State<LoginView>
     final authProvider = context.read<AuthProvider>();
     try {
       if (_tabController.index == 0) {
-        await authProvider.sendPhoneOtp(_phoneController.text.replaceAll(RegExp(r'[\s\-\.]'), ''));
+        await authProvider.sendPhoneOtp(
+            _phoneController.text.replaceAll(RegExp(r'[\s\-\.]'), ''));
       } else {
         await authProvider.sendEmailOtp(_emailController.text.trim());
       }
@@ -113,7 +114,7 @@ class _LoginViewState extends State<LoginView>
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24.0),
               child: ConstrainedBox(
-                // Borne sup pour ne pas s'étaler sur tablette / web — le form
+                // Borne sup pour ne pas s'étaler sur tablette / web - le form
                 // reste lisible à 480px max comme une carte de compte.
                 constraints: const BoxConstraints(maxWidth: 480),
                 child: Column(
@@ -145,7 +146,7 @@ class _LoginViewState extends State<LoginView>
   }
 
   Widget _buildLogo() {
-    // Taille proportionnelle bornée — sur grand écran le logo ne dépasse pas
+    // Taille proportionnelle bornée - sur grand écran le logo ne dépasse pas
     // 160px (vs 40% de la hauteur qui pouvait monter à 350px sur tablette).
     final shortest = MediaQuery.of(context).size.shortestSide;
     final logoSize = (shortest * 0.32).clamp(96.0, 160.0);
@@ -180,14 +181,17 @@ class _LoginViewState extends State<LoginView>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-           _buildLogo(),
-         const Center(
-          child:  Text(
-          "L'administration simplifiée",
-          style: TextStyle(fontSize: 14, color: Color(0xFF176848), fontWeight: FontWeight.w500),
+          _buildLogo(),
+          const Center(
+            child: Text(
+              "L'administration simplifiée",
+              style: TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFF176848),
+                  fontWeight: FontWeight.w500),
+            ),
           ),
-         ),
-           SizedBox(height: MediaQuery.of(context).size.height*0.05),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.05),
           if (!_codeSent) ...[
             Container(
               height: 55,
